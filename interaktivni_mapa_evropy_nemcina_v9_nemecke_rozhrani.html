@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaktivní mapa Evropy – němčina</title>
+<style>
+:root{--bg:#f7f4ed;--panel:#fffdfa;--ink:#2b2b2b;--muted:#6b665d;--border:#d8d1c4;--land:#d9d9d9;--stroke:#ffffff;--green:#89c997;--yellow:#f3d66b;--blue:#8eb8e5;--red:#e89b8f;}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:22px 28px 10px} h1{margin:0 0 4px;font-size:28px} .sub{color:var(--muted);font-size:15px}
+.wrap{display:grid;grid-template-columns:minmax(500px,1fr) 360px;gap:18px;padding:12px 24px 24px;}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.mapcard{padding:12px;overflow:auto} svg{width:100%;height:auto;min-width:760px;background:#cfe4f5;border-radius:14px}
+.country{fill:var(--land);stroke:var(--stroke);stroke-width:.8;cursor:pointer;transition:fill .15s, filter .15s} .country:hover{filter:brightness(.95)}
+.country[data-state="1"]{fill:var(--green)} .country[data-state="2"]{fill:var(--yellow)} .country[data-state="3"]{fill:var(--blue)} .country[data-state="4"]{fill:var(--red)} .country.flash-wrong{filter:brightness(.85);stroke:#c0392b;stroke-width:2}
+.label{font-size:11px;fill:#222;text-anchor:middle;pointer-events:none;font-weight:700;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;opacity:.9} body.hide-labels .label{display:none}
+.sidebar{padding:18px} h2{font-size:19px;margin:0 0 10px} .selected{padding:14px;border:1px solid var(--border);border-radius:14px;background:#fff;margin-bottom:14px;min-height:86px} .big{font-size:24px;font-weight:700}
+.small{color:var(--muted);font-size:14px;margin-top:4px} button{border:1px solid var(--border);background:white;border-radius:12px;padding:9px 11px;cursor:pointer;font-size:14px;margin:3px} button:hover{background:#f1ede6}
+.legend{display:grid;grid-template-columns:1fr;gap:6px;margin:12px 0} .leg{display:flex;align-items:center;gap:8px;font-size:14px} .sw{width:18px;height:18px;border-radius:5px;border:1px solid #aaa} .task{font-size:18px;line-height:1.35;padding:14px;background:#fff;border:1px solid var(--border);border-radius:14px;margin:10px 0;min-height:94px} .sentence{font-size:14px;line-height:1.5;background:#f5f2eb;padding:12px;border-radius:12px;margin-top:12px} .controls{display:flex;flex-wrap:wrap;margin:8px 0 12px}.modes{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0 12px}.mode{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer;font-size:14px}.mode input{margin:0}.mode .sw{flex:0 0 auto}.mode.active{outline:2px solid #8b7d6b;background:#f8f3e8} .note{font-size:13px;color:var(--muted);line-height:1.4} @media(max-width:900px){.wrap{grid-template-columns:1fr}.sidebar{order:-1}}
+
+/* robust mode panels */
+.mode-panel{display:none;}
+.mode-panel.active{display:block;}
+.tabs{display:flex;gap:8px;margin-bottom:14px;}
+.tab{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;}
+.tab.active{background:#2b2b2b;color:#fff;}
+.quiz-clues{margin:8px 0 0 20px;padding:0;}
+.quiz-clues li{margin:7px 0;line-height:1.35;}
+.legend{display:grid;gap:8px;margin:10px 0;}
+.legend label{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;}
+.legend label.active{outline:2px solid #333;}
+.country.flash-wrong{filter:brightness(.85);stroke:#c0392b;stroke-width:2;}
+
+</style></head><body>
+<header><h1>Interaktivní mapa Evropy – Deutsch im Unterricht</h1><div class="sub">Vyber režim/barvu a pak klikej na státy. Název slouží jako kontrola, úkoly jsou zvlášť vpravo.</div></header>
+<div class="wrap"><div class="card mapcard"><svg viewBox="0 0 1000 720" aria-label="Mapa Evropy"><rect x="0" y="0" width="1000" height="720" fill="#cfe4f5"/><g class="country-group"><path class="country" id="RUS" data-de="Russland" data-cz="Rusko" data-state="0" d="M 973.66,544.10 L 965.34,546.91 L 962.94,543.59 L 944.27,535.01 L 924.08,532.11 L 912.48,529.05 L 910.81,531.16 L 893.33,516.04 L 877.68,509.29 L 865.83,498.78 L 875.81,495.92 L 887.19,480.95 L 879.53,473.87 L 899.74,466.57 L 899.38,462.66 L 887.07,465.54 L 887.50,457.59 L 894.57,452.59 L 907.84,451.28 L 910.00,445.31 L 906.97,435.45 L 912.54,426.08 L 912.38,420.82 L 892.16,415.00 L 884.15,415.19 L 875.68,406.81 L 865.16,409.65 L 847.74,403.36 L 848.04,399.83 L 843.16,392.08 L 832.23,391.21 L 831.09,385.65 L 834.52,382.03 L 825.75,371.90 L 811.53,373.63 L 807.37,372.73 L 803.90,376.80 L 798.78,376.08 L 795.41,364.62 L 792.19,358.68 L 794.82,357.00 L 805.89,357.62 L 811.23,353.71 L 807.28,348.94 L 798.03,345.79 L 798.85,342.56 L 793.27,339.29 L 784.67,327.58 L 787.61,322.75 L 786.27,314.35 L 772.86,310.08 L 765.67,312.22 L 763.72,307.78 L 749.28,303.29 L 744.87,292.73 L 743.70,284.05 L 737.10,279.93 L 742.97,274.25 L 738.90,257.56 L 748.66,247.25 L 746.60,244.12 L 762.19,234.23 L 747.82,225.73 L 789.92,192.55 L 795.08,183.42 L 774.78,171.16 L 780.38,159.50 L 768.04,146.18 L 777.27,130.84 L 761.32,110.47 L 773.98,96.98 L 752.97,85.05 L 754.98,72.53 L 766.05,70.88 L 789.39,63.70 L 803.53,57.47 L 826.06,68.29 L 863.62,72.55 L 915.44,92.79 L 925.96,101.29 L 926.87,113.20 L 911.65,122.61 L 889.25,127.38 L 828.03,113.78 L 817.96,116.05 L 840.32,129.16 L 842.09,155.74 L 859.74,161.20 L 870.46,165.85 L 872.23,157.17 L 863.97,149.48 L 872.70,142.70 L 905.85,153.84 L 917.40,149.48 L 908.17,136.37 L 940.13,118.85 L 952.79,119.88 L 965.60,126.13 L 973.59,113.83 L 962.15,103.17 L 968.86,92.46 L 958.78,81.36 L 980.00,84.54 L 980.00,545.96 L 973.66,544.10 Z  M 649.38,336.51 L 632.49,334.48 L 635.61,326.61 L 654.54,320.80 L 668.90,323.94 L 674.96,326.78 L 673.50,331.68 L 674.60,336.24 L 649.38,336.51 Z  M 825.02,481.33 L 839.18,485.88 L 840.96,489.41 L 843.03,489.96 L 843.14,491.50 L 849.85,495.82 L 863.84,494.75 L 861.16,501.13 L 846.15,504.23 L 827.53,514.58 L 819.91,510.94 L 822.93,502.54 L 807.94,497.30 L 810.37,493.87 L 823.49,487.92 L 821.41,485.77 L 825.02,481.33 Z "/><text class="label" x="863.5" y="298.0">Russland</text></g>
+<g class="country-group"><path class="country" id="NOR" data-de="Norwegen" data-cz="Norsko" data-state="0" d="M 766.05,70.88 L 754.98,72.53 L 760.79,59.97 L 743.19,52.85 L 721.89,58.92 L 715.17,72.04 L 702.09,79.96 L 687.37,75.63 L 669.46,76.52 L 654.22,67.06 L 646.00,71.78 L 637.49,72.52 L 635.48,84.29 L 609.63,81.43 L 606.00,91.39 L 592.83,91.33 L 570.06,123.90 L 548.76,149.07 L 553.76,155.19 L 548.99,162.28 L 535.38,161.97 L 526.48,178.76 L 527.32,202.52 L 536.08,211.59 L 531.55,232.63 L 520.14,244.89 L 514.09,255.21 L 504.89,244.22 L 477.81,264.92 L 459.53,269.11 L 440.56,260.00 L 435.66,240.76 L 431.32,199.47 L 443.95,187.95 L 480.16,172.93 L 507.24,154.46 L 565.30,94.97 L 625.95,59.06 L 656.05,51.22 L 678.61,52.17 L 699.50,37.35 L 724.50,38.14 L 749.13,34.58 L 792.02,47.67 L 774.36,52.46 L 789.39,63.70 L 766.05,70.88 Z "/><text class="label" x="530.4" y="151.8">Norwegen</text></g>
+<g class="country-group"><path class="country" id="FRA" data-de="Frankreich" data-cz="Francie" data-state="0" d="M 454.17,427.96 L 473.93,431.26 L 467.00,443.51 L 465.26,456.26 L 461.49,459.32 L 455.24,457.67 L 455.69,462.22 L 445.66,472.28 L 445.45,480.38 L 452.00,477.57 L 456.71,485.42 L 456.15,490.48 L 460.18,497.20 L 455.43,502.65 L 458.96,516.49 L 466.39,518.76 L 464.83,526.53 L 452.40,536.64 L 425.35,531.80 L 405.38,537.60 L 403.81,548.38 L 387.91,550.70 L 372.48,542.60 L 367.49,546.47 L 342.25,538.34 L 336.78,531.38 L 343.87,520.65 L 346.49,485.00 L 332.33,466.22 L 322.22,457.16 L 301.26,450.28 L 299.88,437.23 L 317.66,433.34 L 340.69,437.94 L 336.34,417.69 L 349.29,425.36 L 381.22,411.41 L 385.33,396.74 L 397.33,393.13 L 399.32,399.42 L 405.69,399.72 L 412.07,406.90 L 421.64,415.34 L 428.68,413.95 L 440.67,422.10 L 443.74,423.66 L 447.70,423.28 L 454.17,427.96 Z  M 491.63,538.77 L 493.97,554.11 L 489.44,567.94 L 483.21,564.29 L 480.03,552.25 L 482.80,545.60 L 491.63,538.77 Z "/><text class="label" x="391.6" y="469.2">Frankreich</text></g>
+<g class="country-group"><path class="country" id="SWE" data-de="Schweden" data-cz="Švédsko" data-state="0" d="M 520.14,244.89 L 531.55,232.63 L 536.08,211.59 L 527.32,202.52 L 526.48,178.76 L 535.38,161.97 L 548.99,162.28 L 553.76,155.19 L 548.76,149.07 L 570.06,123.90 L 592.83,91.33 L 606.00,91.39 L 609.63,81.43 L 635.48,84.29 L 637.49,72.52 L 646.00,71.78 L 664.28,80.54 L 685.68,92.72 L 686.05,120.28 L 690.67,127.24 L 667.08,132.31 L 653.79,144.80 L 655.93,155.76 L 634.11,170.14 L 607.63,185.54 L 597.64,210.74 L 607.40,223.35 L 620.52,233.27 L 607.92,253.46 L 593.66,257.65 L 588.43,287.69 L 580.64,304.45 L 564.00,302.72 L 556.24,316.91 L 540.36,317.74 L 536.00,300.82 L 524.52,280.51 L 514.09,255.21 L 520.14,244.89 Z "/><text class="label" x="565.6" y="194.0">Schweden</text></g>
+<g class="country-group"><path class="country" id="BLR" data-de="Belarus" data-cz="Bělorusko" data-state="0" d="M 763.72,307.78 L 765.67,312.22 L 772.86,310.08 L 786.27,314.35 L 787.61,322.75 L 784.67,327.58 L 793.27,339.29 L 798.85,342.56 L 798.03,345.79 L 807.28,348.94 L 811.23,353.71 L 805.89,357.62 L 794.82,357.00 L 792.19,358.68 L 795.41,364.62 L 798.78,376.08 L 787.01,377.14 L 782.78,381.07 L 781.90,390.07 L 776.44,388.34 L 764.07,389.20 L 760.47,385.02 L 755.33,388.14 L 750.17,385.55 L 739.37,385.19 L 724.06,380.90 L 710.21,379.49 L 699.59,379.89 L 692.07,384.74 L 685.51,385.44 L 685.25,377.47 L 681.02,369.18 L 689.25,365.53 L 689.32,358.39 L 685.52,351.59 L 684.93,343.67 L 698.18,343.79 L 713.07,337.05 L 716.25,326.95 L 727.50,321.22 L 726.21,313.20 L 749.28,303.29 L 763.72,307.78 Z "/><text class="label" x="743.9" y="347.4">Belarus</text></g>
+<g class="country-group"><path class="country" id="UKR" data-de="Ukraine" data-cz="Ukrajina" data-state="0" d="M 803.90,376.80 L 807.37,372.73 L 811.53,373.63 L 825.75,371.90 L 834.52,382.03 L 831.09,385.65 L 832.23,391.21 L 843.16,392.08 L 848.04,399.83 L 847.74,403.36 L 865.16,409.65 L 875.68,406.81 L 884.15,415.19 L 892.16,415.00 L 912.38,420.82 L 912.54,426.08 L 906.97,435.45 L 910.00,445.31 L 907.84,451.28 L 894.57,452.59 L 887.50,457.59 L 887.07,465.54 L 876.12,466.97 L 866.99,472.76 L 854.15,473.70 L 842.34,480.37 L 843.03,489.96 L 840.96,489.41 L 839.18,485.88 L 825.02,481.33 L 821.41,485.77 L 819.52,483.82 L 798.21,479.30 L 797.26,472.63 L 784.55,474.83 L 779.46,484.68 L 768.85,497.91 L 762.62,494.84 L 756.18,497.72 L 750.06,494.42 L 753.51,492.48 L 755.91,486.34 L 759.66,480.63 L 758.69,477.43 L 761.56,476.00 L 762.91,478.48 L 770.99,479.00 L 774.62,477.68 L 772.07,475.86 L 773.04,473.20 L 768.25,468.65 L 766.26,461.17 L 761.27,458.24 L 762.25,452.17 L 756.06,447.36 L 750.42,446.69 L 740.31,441.11 L 731.19,442.88 L 727.92,445.52 L 722.14,445.52 L 718.69,449.70 L 708.56,451.42 L 703.88,454.17 L 697.51,449.80 L 688.72,449.73 L 680.24,447.75 L 674.32,451.58 L 673.36,446.79 L 665.75,441.92 L 668.42,434.70 L 672.23,430.04 L 675.22,431.09 L 671.68,423.05 L 684.13,408.16 L 690.94,406.08 L 692.41,401.06 L 685.51,385.44 L 692.07,384.74 L 699.59,379.89 L 710.21,379.49 L 724.06,380.90 L 739.37,385.19 L 750.17,385.55 L 755.33,388.14 L 760.47,385.02 L 764.07,389.20 L 776.44,388.34 L 781.90,390.07 L 782.78,381.07 L 787.01,377.14 L 798.78,376.08 L 803.90,376.80 Z "/><text class="label" x="787.7" y="435.1">Ukraine</text></g>
+<g class="country-group"><path class="country" id="POL" data-de="Polen" data-cz="Polsko" data-state="0" d="M 685.52,351.59 L 689.32,358.39 L 689.25,365.53 L 681.02,369.18 L 685.25,377.47 L 685.51,385.44 L 692.41,401.06 L 690.94,406.08 L 684.13,408.16 L 671.68,423.05 L 675.22,431.09 L 659.19,423.17 L 649.32,425.70 L 642.85,423.86 L 634.74,427.69 L 627.83,421.35 L 622.19,423.78 L 615.10,413.89 L 604.91,412.81 L 603.61,407.20 L 594.20,405.20 L 592.15,409.82 L 584.70,406.12 L 585.56,401.20 L 575.30,399.64 L 568.80,393.88 L 563.18,382.45 L 564.25,376.29 L 560.86,366.71 L 555.88,360.34 L 559.70,355.56 L 556.50,346.45 L 565.87,341.20 L 604.54,326.87 L 618.23,329.89 L 619.26,334.25 L 632.49,334.48 L 649.38,336.51 L 674.60,336.24 L 681.63,338.16 L 684.93,343.67 L 685.52,351.59 Z "/><text class="label" x="624.5" y="380.0">Polen</text></g>
+<g class="country-group"><path class="country" id="AUT" data-de="Österreich" data-cz="Rakousko" data-state="0" d="M 594.68,454.58 L 586.96,454.61 L 589.61,458.49 L 585.06,470.01 L 582.45,473.03 L 570.45,473.48 L 563.53,477.54 L 552.20,476.15 L 532.59,471.53 L 529.53,465.30 L 515.97,468.41 L 514.38,471.82 L 506.07,469.27 L 499.07,468.79 L 492.87,465.53 L 494.97,461.15 L 494.44,457.97 L 498.57,456.99 L 505.51,461.96 L 507.47,457.23 L 519.56,458.00 L 529.37,454.79 L 535.94,455.34 L 540.22,459.00 L 541.50,455.96 L 539.55,444.30 L 544.48,442.03 L 549.32,433.78 L 559.50,439.54 L 567.22,432.22 L 572.05,430.88 L 582.69,436.34 L 589.13,435.41 L 595.46,438.79 L 594.35,441.06 L 595.72,447.26 L 594.68,454.58 Z "/><text class="label" x="567.9" y="450.9">Österreich</text></g>
+<g class="country-group"><path class="country" id="HUN" data-de="Ungarn" data-cz="Maďarsko" data-state="0" d="M 673.36,446.79 L 674.32,451.58 L 665.94,455.34 L 659.45,467.47 L 651.16,479.61 L 640.16,482.98 L 631.60,482.19 L 615.97,489.57 L 604.64,486.13 L 590.03,476.25 L 587.37,470.21 L 585.06,470.01 L 589.61,458.49 L 586.96,454.61 L 594.68,454.58 L 595.72,447.26 L 602.70,451.85 L 607.75,453.80 L 619.27,451.60 L 620.37,448.01 L 625.82,447.48 L 632.50,444.70 L 633.98,445.85 L 640.42,443.61 L 643.64,439.40 L 648.13,438.31 L 662.82,443.75 L 665.75,441.92 L 673.36,446.79 Z "/><text class="label" x="624.8" y="463.0">Ungarn</text></g>
+<g class="country-group"><path class="country" id="MDA" data-de="Moldau" data-cz="Moldavsko" data-state="0" d="M 731.19,442.88 L 740.31,441.11 L 750.42,446.69 L 756.06,447.36 L 762.25,452.17 L 761.27,458.24 L 766.26,461.17 L 768.25,468.65 L 773.04,473.20 L 772.07,475.86 L 774.62,477.68 L 770.99,479.00 L 762.91,478.48 L 761.56,476.00 L 758.69,477.43 L 759.66,480.63 L 755.91,486.34 L 753.51,492.48 L 750.06,494.42 L 747.60,486.25 L 749.05,478.61 L 748.61,470.76 L 732.10,447.27 L 727.92,445.52 L 731.19,442.88 Z "/><text class="label" x="755.9" y="464.9">Moldau</text></g>
+<g class="country-group"><path class="country" id="ROU" data-de="Rumänien" data-cz="Rumunsko" data-state="0" d="M 756.18,497.72 L 762.62,494.84 L 768.85,497.91 L 769.16,502.52 L 762.51,506.38 L 758.35,504.70 L 754.51,526.29 L 746.45,524.41 L 736.47,517.90 L 720.32,522.06 L 713.52,526.63 L 693.38,525.69 L 682.84,522.90 L 677.53,524.21 L 671.07,513.73 L 674.25,510.71 L 670.87,508.48 L 666.56,512.49 L 658.56,507.29 L 657.49,499.92 L 649.13,495.71 L 647.60,490.01 L 640.16,482.98 L 651.16,479.61 L 659.45,467.47 L 665.94,455.34 L 680.24,447.75 L 688.72,449.73 L 697.51,449.80 L 703.88,454.17 L 708.56,451.42 L 718.69,449.70 L 722.14,445.52 L 727.92,445.52 L 732.10,447.27 L 748.61,470.76 L 749.05,478.61 L 747.60,486.25 L 750.06,494.42 L 756.18,497.72 Z "/><text class="label" x="694.9" y="484.6">Rumänien</text></g>
+<g class="country-group"><path class="country" id="LTU" data-de="Litauen" data-cz="Litva" data-state="0" d="M 727.50,321.22 L 716.25,326.95 L 713.07,337.05 L 698.18,343.79 L 684.93,343.67 L 681.63,338.16 L 674.60,336.24 L 673.50,331.68 L 674.96,326.78 L 668.90,323.94 L 654.54,320.80 L 651.62,305.76 L 667.33,300.27 L 690.33,301.42 L 703.80,299.65 L 705.73,303.37 L 713.02,304.52 L 726.21,313.20 L 727.50,321.22 Z "/><text class="label" x="693.8" y="322.6">Litauen</text></g>
+<g class="country-group"><path class="country" id="LVA" data-de="Lettland" data-cz="Lotyšsko" data-state="0" d="M 743.70,284.05 L 744.87,292.73 L 749.28,303.29 L 726.21,313.20 L 713.02,304.52 L 705.73,303.37 L 703.80,299.65 L 690.33,301.42 L 667.33,300.27 L 651.62,305.76 L 652.10,292.29 L 658.84,281.05 L 671.76,274.94 L 682.65,288.31 L 693.66,287.96 L 696.29,274.22 L 707.97,271.06 L 713.98,273.25 L 725.79,279.90 L 737.10,279.93 L 743.70,284.05 Z "/><text class="label" x="698.9" y="290.3">Lettland</text></g>
+<g class="country-group"><path class="country" id="EST" data-de="Estland" data-cz="Estonsko" data-state="0" d="M 746.60,244.12 L 748.66,247.25 L 738.90,257.56 L 742.97,274.25 L 737.10,279.93 L 725.79,279.90 L 713.98,273.25 L 707.97,271.06 L 696.29,274.22 L 697.88,263.67 L 692.84,265.92 L 684.14,259.56 L 682.95,249.28 L 700.29,244.30 L 717.57,241.70 L 732.45,244.65 L 746.60,244.12 Z "/><text class="label" x="713.4" y="261.6">Estland</text></g>
+<g class="country-group"><path class="country" id="DEU" data-de="Deutschland" data-cz="Německo" data-state="0" d="M 559.70,355.56 L 555.88,360.34 L 560.86,366.71 L 564.25,376.29 L 563.18,382.45 L 568.80,393.88 L 562.68,395.75 L 559.07,393.69 L 555.63,397.10 L 545.78,400.56 L 540.69,405.02 L 530.72,408.92 L 533.12,414.24 L 534.57,421.78 L 541.57,426.08 L 549.32,433.78 L 544.48,442.03 L 539.55,444.30 L 541.50,455.96 L 540.22,459.00 L 535.94,455.34 L 529.37,454.79 L 519.56,458.00 L 507.47,457.23 L 505.51,461.96 L 498.57,456.99 L 494.44,457.97 L 479.74,452.50 L 476.92,456.39 L 465.26,456.26 L 467.00,443.51 L 473.93,431.26 L 454.17,427.96 L 447.70,423.28 L 448.47,415.43 L 445.73,411.39 L 447.29,399.30 L 444.99,380.55 L 453.23,380.54 L 456.70,373.81 L 460.12,357.42 L 457.56,351.37 L 460.23,347.58 L 471.70,346.61 L 474.24,350.56 L 483.55,341.73 L 480.42,335.03 L 479.79,324.88 L 490.15,327.24 L 498.93,324.51 L 499.17,331.43 L 513.03,335.60 L 512.88,341.95 L 526.83,338.59 L 534.54,333.69 L 550.02,340.75 L 556.50,346.45 L 559.70,355.56 Z "/><text class="label" x="505.9" y="388.1">Deutschland</text></g>
+<g class="country-group"><path class="country" id="BGR" data-de="Bulgarien" data-cz="Bulharsko" data-state="0" d="M 677.53,524.21 L 682.84,522.90 L 693.38,525.69 L 713.52,526.63 L 720.32,522.06 L 736.47,517.90 L 746.45,524.41 L 754.51,526.29 L 747.39,533.70 L 742.38,546.50 L 746.81,556.71 L 735.00,554.31 L 721.03,559.94 L 720.88,568.85 L 708.42,570.54 L 698.76,564.29 L 687.78,569.21 L 677.63,568.69 L 676.66,556.85 L 669.79,551.11 L 672.05,548.59 L 670.56,546.46 L 672.87,540.76 L 678.09,535.17 L 671.43,527.44 L 670.20,520.91 L 673.58,516.85 L 677.53,524.21 Z "/><text class="label" x="707.6" y="543.6">Bulgarien</text></g>
+<g class="country-group"><path class="country" id="GRC" data-de="Griechenland" data-cz="Řecko" data-state="0" d="M 721.69,682.02 L 701.94,683.54 L 702.08,680.58 L 685.35,677.09 L 687.89,669.49 L 695.38,675.52 L 706.06,674.50 L 716.26,675.77 L 715.93,678.88 L 723.41,676.74 L 721.69,682.02 Z  M 687.78,569.21 L 698.76,564.29 L 708.42,570.54 L 720.88,568.85 L 721.03,559.94 L 727.71,564.68 L 723.47,575.88 L 720.21,577.88 L 704.70,575.68 L 688.09,580.34 L 697.60,590.39 L 690.63,593.31 L 682.99,593.33 L 675.73,584.11 L 673.16,588.04 L 676.23,598.73 L 683.09,607.13 L 677.92,611.05 L 685.55,619.29 L 692.34,624.48 L 692.55,634.59 L 679.86,629.85 L 683.91,638.98 L 675.20,640.86 L 680.40,656.65 L 671.29,656.87 L 660.05,649.09 L 654.90,634.77 L 652.50,622.87 L 640.13,604.44 L 639.20,599.34 L 645.58,590.66 L 646.40,584.85 L 650.86,582.25 L 651.13,577.55 L 660.10,575.97 L 665.33,572.06 L 672.76,572.40 L 675.02,569.28 L 687.78,569.21 Z "/><text class="label" x="661.9" y="609.1">Griechenland</text></g>
+<g class="country-group"><path class="country" id="TUR" data-de="die Türkei" data-cz="Turecko" data-state="0" d="M 970.31,646.29 L 965.49,641.73 L 949.54,639.42 L 943.65,642.20 L 928.05,644.99 L 920.66,644.68 L 904.88,651.40 L 893.60,651.45 L 886.30,648.08 L 871.20,653.06 L 866.71,649.58 L 865.97,659.56 L 858.63,667.40 L 853.58,659.29 L 858.78,652.57 L 850.41,654.09 L 838.94,649.97 L 829.51,660.27 L 808.70,662.29 L 797.59,652.68 L 782.81,652.08 L 779.65,659.50 L 770.17,661.63 L 756.91,652.10 L 741.94,652.42 L 733.81,634.62 L 723.79,624.70 L 730.46,610.78 L 721.77,602.23 L 736.98,585.12 L 758.10,584.40 L 763.86,570.80 L 790.00,573.17 L 806.49,561.56 L 822.47,556.50 L 845.16,556.12 L 869.09,568.74 L 888.77,575.66 L 904.74,572.90 L 916.55,574.49 L 932.74,565.15 L 947.35,564.30 L 960.56,573.09 L 962.89,579.39 L 961.57,588.09 L 971.77,592.54 L 977.17,597.77 L 967.78,602.86 L 972.06,623.39 L 969.38,628.93 L 976.88,643.27 L 970.31,646.29 Z  M 735.00,554.31 L 746.81,556.71 L 748.44,563.59 L 760.41,569.37 L 757.92,573.75 L 741.63,574.74 L 724.34,589.91 L 720.02,581.58 L 720.21,577.88 L 723.47,575.88 L 727.71,564.68 L 721.03,559.94 L 735.00,554.31 Z "/><text class="label" x="849.1" y="617.1">die Türkei</text></g>
+<g class="country-group"><path class="country" id="ALB" data-de="Albanien" data-cz="Albánie" data-state="0" d="M 650.86,582.25 L 646.40,584.85 L 645.58,590.66 L 639.20,599.34 L 636.87,598.09 L 636.59,594.15 L 629.00,588.14 L 627.80,579.62 L 628.96,567.41 L 630.83,561.85 L 628.53,559.03 L 627.60,553.34 L 633.55,544.53 L 634.42,547.89 L 638.11,546.31 L 641.03,551.11 L 644.31,552.94 L 645.24,559.43 L 643.49,565.52 L 645.44,573.19 L 651.13,577.55 L 650.86,582.25 Z "/><text class="label" x="636.7" y="570.3">Albanien</text></g>
+<g class="country-group"><path class="country" id="HRV" data-de="Kroatien" data-cz="Chorvatsko" data-state="0" d="M 590.03,476.25 L 604.64,486.13 L 615.97,489.57 L 621.09,486.89 L 624.43,493.83 L 628.78,498.93 L 623.50,505.66 L 617.30,501.70 L 607.82,501.95 L 596.03,498.97 L 589.62,499.37 L 586.65,503.08 L 581.73,498.97 L 578.86,506.40 L 585.57,514.77 L 588.55,520.31 L 600.08,530.96 L 605.26,538.44 L 617.39,545.21 L 615.89,548.25 L 602.99,541.63 L 595.04,535.19 L 582.50,529.87 L 570.96,516.70 L 573.73,515.36 L 567.48,507.84 L 567.22,501.80 L 558.41,498.97 L 554.20,506.70 L 550.15,500.71 L 550.95,494.20 L 560.51,494.82 L 563.02,491.80 L 567.68,494.72 L 573.07,495.06 L 573.01,490.06 L 577.78,488.23 L 579.11,481.00 L 590.03,476.25 Z "/><text class="label" x="576.6" y="511.3">Kroatien</text></g>
+<g class="country-group"><path class="country" id="CHE" data-de="die Schweiz" data-cz="Švýcarsko" data-state="0" d="M 494.97,461.15 L 492.87,465.53 L 499.07,468.79 L 506.07,469.27 L 504.98,476.61 L 498.94,479.63 L 488.79,477.39 L 485.82,484.60 L 479.29,485.17 L 476.91,482.33 L 469.23,488.40 L 462.61,489.25 L 456.71,485.42 L 452.00,477.57 L 445.45,480.38 L 445.66,472.28 L 455.69,462.22 L 455.24,457.67 L 461.49,459.32 L 465.26,456.26 L 476.92,456.39 L 479.74,452.50 L 494.44,457.97 L 494.97,461.15 Z "/><text class="label" x="476.5" y="470.8">die Schweiz</text></g>
+<g class="country-group"><path class="country" id="LUX" data-de="Luxemburg" data-cz="Lucembursko" data-state="0" d="M 448.47,415.43 L 447.70,423.28 L 443.74,423.66 L 440.67,422.10 L 442.16,412.07 L 445.73,411.39 L 448.47,415.43 Z "/><text class="label" x="444.7" y="418.8">Luxemburg</text></g>
+<g class="country-group"><path class="country" id="BEL" data-de="Belgien" data-cz="Belgie" data-state="0" d="M 445.73,411.39 L 442.16,412.07 L 440.67,422.10 L 428.68,413.95 L 421.64,415.34 L 412.07,406.90 L 405.69,399.72 L 399.32,399.42 L 397.33,393.13 L 408.32,389.60 L 418.36,391.01 L 431.07,387.29 L 439.75,395.12 L 447.29,399.30 L 445.73,411.39 Z "/><text class="label" x="427.8" y="403.3">Belgien</text></g>
+<g class="country-group"><path class="country" id="NLD" data-de="die Niederlande" data-cz="Nizozemsko" data-state="0" d="M 460.12,357.42 L 456.70,373.81 L 453.23,380.54 L 444.99,380.55 L 447.29,399.30 L 439.75,395.12 L 431.07,387.29 L 418.36,391.01 L 408.32,389.60 L 415.39,384.68 L 427.40,358.36 L 446.16,350.87 L 457.56,351.37 L 460.12,357.42 Z "/><text class="label" x="436.9" y="377.2">die Niederlande</text></g>
+<g class="country-group"><path class="country" id="PRT" data-de="Portugal" data-cz="Portugalsko" data-state="0" d="M 243.93,554.43 L 249.52,551.82 L 252.96,560.58 L 261.06,560.56 L 263.41,558.30 L 271.40,558.93 L 275.24,567.90 L 268.90,572.75 L 268.72,586.71 L 266.49,589.33 L 265.94,597.79 L 260.02,599.26 L 265.51,609.99 L 261.73,621.75 L 266.46,627.07 L 264.57,631.93 L 259.49,638.64 L 260.63,644.57 L 255.12,649.21 L 247.89,646.69 L 240.82,648.66 L 242.91,634.66 L 241.62,623.66 L 235.49,622.01 L 232.21,615.22 L 233.30,603.51 L 238.77,597.01 L 242.60,579.02 L 242.30,571.44 L 239.55,565.01 L 238.95,558.98 L 243.93,554.43 Z "/><text class="label" x="248.1" y="601.4">Portugal</text></g>
+<g class="country-group"><path class="country" id="ESP" data-de="Spanien" data-cz="Španělsko" data-state="0" d="M 259.49,638.64 L 264.57,631.93 L 266.46,627.07 L 261.73,621.75 L 265.51,609.99 L 260.02,599.26 L 265.94,597.79 L 266.49,589.33 L 268.72,586.71 L 268.90,572.75 L 275.24,567.90 L 271.40,558.93 L 263.41,558.30 L 261.06,560.56 L 252.96,560.58 L 249.52,551.82 L 243.93,554.43 L 238.95,558.98 L 239.64,546.23 L 234.04,538.47 L 253.44,525.56 L 270.22,528.78 L 288.64,528.67 L 303.23,531.73 L 314.62,530.79 L 336.78,531.38 L 342.25,538.34 L 367.49,546.47 L 372.48,542.60 L 387.91,550.70 L 403.81,548.38 L 404.54,558.77 L 391.55,570.69 L 373.97,574.47 L 372.75,580.49 L 364.32,590.41 L 359.03,604.98 L 364.38,615.21 L 356.45,623.19 L 353.48,634.82 L 343.13,638.39 L 333.42,652.15 L 302.94,652.08 L 294.35,658.40 L 289.11,665.16 L 282.40,663.68 L 277.33,657.63 L 273.44,647.34 L 260.63,644.57 L 259.49,638.64 Z "/><text class="label" x="314.6" y="594.1">Spanien</text></g>
+<g class="country-group"><path class="country" id="IRL" data-de="Irland" data-cz="Irsko" data-state="0" d="M 280.12,357.26 L 269.75,373.24 L 245.44,383.81 L 226.03,381.11 L 237.15,362.42 L 229.99,344.23 L 259.01,321.86 L 261.84,331.44 L 259.01,341.03 L 267.49,340.79 L 277.86,344.48 L 280.12,357.26 Z "/><text class="label" x="255.8" y="350.9">Irland</text></g>
+<g class="country-group"><path class="country" id="ITA" data-de="Italien" data-cz="Itálie" data-state="0" d="M 514.38,471.82 L 515.97,468.41 L 529.53,465.30 L 532.59,471.53 L 552.20,476.15 L 550.72,484.96 L 554.00,492.58 L 543.08,489.97 L 531.93,496.33 L 532.69,505.21 L 531.01,510.31 L 535.51,519.42 L 548.37,528.43 L 555.27,543.22 L 570.53,557.64 L 581.27,557.53 L 584.62,561.49 L 580.77,565.05 L 603.12,576.94 L 614.88,586.27 L 616.30,589.61 L 613.74,596.02 L 606.13,587.66 L 594.21,584.72 L 588.44,596.29 L 598.35,602.93 L 596.72,612.26 L 591.00,613.33 L 583.67,628.67 L 577.95,630.05 L 578.01,624.58 L 580.80,614.98 L 583.79,611.16 L 574.24,591.77 L 568.55,589.54 L 564.50,581.81 L 555.69,578.56 L 549.76,571.37 L 539.61,570.21 L 528.89,562.13 L 516.35,550.48 L 507.02,540.17 L 502.74,522.48 L 495.92,520.40 L 484.76,514.50 L 478.45,516.91 L 470.52,525.22 L 464.83,526.53 L 466.39,518.76 L 458.96,516.49 L 455.43,502.65 L 460.18,497.20 L 456.15,490.48 L 456.71,485.42 L 462.61,489.25 L 469.23,488.40 L 476.91,482.33 L 479.29,485.17 L 485.82,484.60 L 488.79,477.39 L 498.94,479.63 L 504.98,476.61 L 506.07,469.27 L 514.38,471.82 Z  M 575.71,624.28 L 570.77,638.37 L 572.82,643.91 L 569.94,653.12 L 559.45,646.38 L 552.48,644.45 L 533.34,635.35 L 535.26,626.16 L 551.31,627.80 L 575.71,624.28 Z  M 489.17,570.98 L 497.39,583.68 L 495.47,607.35 L 489.23,606.22 L 483.64,612.20 L 478.45,607.45 L 477.90,585.86 L 474.77,575.63 L 482.31,576.53 L 489.17,570.98 Z "/><text class="label" x="536.1" y="546.9">Italien</text></g>
+<g class="country-group"><path class="country" id="DNK" data-de="Dänemark" data-cz="Dánsko" data-state="0" d="M 490.15,327.24 L 479.79,324.88 L 474.22,314.95 L 473.81,296.65 L 480.02,286.45 L 492.11,285.34 L 496.92,280.41 L 507.95,275.36 L 507.49,284.56 L 503.43,290.39 L 505.07,295.40 L 512.51,298.11 L 509.16,304.86 L 505.07,302.92 L 495.20,315.80 L 498.93,324.51 L 490.15,327.24 Z  M 536.89,313.29 L 528.66,327.79 L 514.31,317.68 L 512.40,310.25 L 532.52,304.32 L 536.89,313.29 Z "/><text class="label" x="492.6" y="300.5">Dänemark</text></g>
+<g class="country-group"><path class="country" id="GBR" data-de="Großbritannien" data-cz="Velká Británie" data-state="0" d="M 267.49,340.79 L 259.01,341.03 L 261.84,331.44 L 259.01,321.86 L 270.51,321.12 L 285.21,332.18 L 277.86,344.48 L 267.49,340.79 Z  M 320.45,352.76 L 322.47,342.37 L 313.07,331.10 L 296.42,327.95 L 293.15,323.11 L 298.14,315.11 L 293.63,310.18 L 286.24,318.64 L 285.44,301.39 L 278.51,292.27 L 283.49,273.77 L 294.15,259.25 L 305.10,260.67 L 321.65,259.16 L 306.99,278.52 L 320.96,276.07 L 335.99,276.17 L 332.41,290.75 L 320.08,306.78 L 334.26,307.93 L 347.57,330.92 L 356.95,333.80 L 365.39,354.18 L 369.30,361.25 L 385.92,364.66 L 384.25,376.11 L 377.26,381.35 L 382.74,390.61 L 370.40,399.98 L 352.06,399.82 L 328.71,404.74 L 322.31,401.21 L 313.25,409.60 L 300.56,407.57 L 290.93,414.40 L 283.64,410.83 L 303.75,392.03 L 316.02,388.17 L 294.50,385.17 L 290.62,378.05 L 304.95,372.50 L 297.44,362.86 L 300.05,351.14 L 320.45,352.76 Z "/><text class="label" x="338.8" y="338.1">Großbritannien</text></g>
+<g class="country-group"><path class="country" id="ISL" data-de="Island" data-cz="Island" data-state="0" d="M 160.71,130.79 L 176.21,143.00 L 158.38,156.64 L 107.00,172.17 L 50.68,163.87 L 64.18,155.96 L 34.33,147.21 L 58.61,143.74 L 58.02,138.49 L 29.24,134.33 L 38.51,122.67 L 59.29,120.02 L 80.67,132.16 L 101.51,122.42 L 118.76,127.48 L 141.13,117.94 L 163.88,119.21 L 160.71,130.79 Z "/><text class="label" x="109.7" y="145.5">Island</text></g>
+<g class="country-group"><path class="country" id="GEO" data-de="Georgien" data-cz="Gruzie" data-state="0" d="M 912.48,529.05 L 924.08,532.11 L 944.27,535.01 L 962.94,543.59 L 965.34,546.91 L 973.66,544.10 L 980.00,545.96 L 980.00,569.97 L 960.56,573.09 L 947.35,564.30 L 932.74,565.15 L 934.79,557.51 L 931.36,545.30 L 923.44,538.70 L 915.84,536.65 L 910.81,531.16 L 912.48,529.05 Z "/><text class="label" x="956.7" y="552.2">Georgien</text></g>
+<g class="country-group"><path class="country" id="SVN" data-de="Slowenien" data-cz="Slovinsko" data-state="0" d="M 563.53,477.54 L 570.45,473.48 L 582.45,473.03 L 585.06,470.01 L 587.37,470.21 L 590.03,476.25 L 579.11,481.00 L 577.78,488.23 L 573.01,490.06 L 573.07,495.06 L 567.68,494.72 L 563.02,491.80 L 560.51,494.82 L 550.95,494.20 L 554.00,492.58 L 550.72,484.96 L 552.20,476.15 L 563.53,477.54 Z "/><text class="label" x="564.9" y="483.0">Slowenien</text></g>
+<g class="country-group"><path class="country" id="FIN" data-de="Finnland" data-cz="Finsko" data-state="0" d="M 752.97,85.05 L 773.98,96.98 L 761.32,110.47 L 777.27,130.84 L 768.04,146.18 L 780.38,159.50 L 774.78,171.16 L 795.08,183.42 L 789.92,192.55 L 747.82,225.73 L 722.93,227.15 L 698.81,233.71 L 676.50,237.49 L 668.56,227.72 L 655.28,221.85 L 658.33,204.22 L 651.67,188.08 L 658.21,177.66 L 670.64,166.42 L 702.02,147.01 L 711.17,143.27 L 709.75,135.70 L 690.67,127.24 L 686.05,120.28 L 685.68,92.72 L 664.28,80.54 L 646.00,71.78 L 654.22,67.06 L 669.46,76.52 L 687.37,75.63 L 702.09,79.96 L 715.17,72.04 L 721.89,58.92 L 743.19,52.85 L 760.79,59.97 L 754.98,72.53 L 752.97,85.05 Z "/><text class="label" x="738.3" y="144.7">Finnland</text></g>
+<g class="country-group"><path class="country" id="SVK" data-de="die Slowakei" data-cz="Slovensko" data-state="0" d="M 668.42,434.70 L 665.75,441.92 L 662.82,443.75 L 648.13,438.31 L 643.64,439.40 L 640.42,443.61 L 633.98,445.85 L 632.50,444.70 L 625.82,447.48 L 620.37,448.01 L 619.27,451.60 L 607.75,453.80 L 602.70,451.85 L 595.72,447.26 L 594.35,441.06 L 597.40,434.85 L 603.47,435.16 L 608.16,433.31 L 608.53,431.64 L 611.15,430.79 L 612.05,426.72 L 615.20,425.94 L 617.33,422.72 L 621.41,422.70 L 622.19,423.78 L 627.83,421.35 L 634.74,427.69 L 642.85,423.86 L 649.32,425.70 L 659.19,423.17 L 672.23,430.04 L 668.42,434.70 Z "/><text class="label" x="632.1" y="436.7">die Slowakei</text></g>
+<g class="country-group"><path class="country" id="CZE" data-de="Tschechien" data-cz="Česko" data-state="0" d="M 575.30,399.64 L 585.56,401.20 L 584.70,406.12 L 592.15,409.82 L 594.20,405.20 L 603.61,407.20 L 604.91,412.81 L 615.10,413.89 L 621.41,422.70 L 617.33,422.72 L 615.20,425.94 L 612.05,426.72 L 611.15,430.79 L 608.53,431.64 L 608.16,433.31 L 603.47,435.16 L 597.40,434.85 L 595.46,438.79 L 589.13,435.41 L 582.69,436.34 L 572.05,430.88 L 567.22,432.22 L 559.50,439.54 L 549.32,433.78 L 541.57,426.08 L 534.57,421.78 L 533.12,414.24 L 530.72,408.92 L 540.69,405.02 L 545.78,400.56 L 555.63,397.10 L 559.07,393.69 L 562.68,395.75 L 568.80,393.88 L 575.30,399.64 Z "/><text class="label" x="576.0" y="418.0">Tschechien</text></g>
+<g class="country-group"><path class="country" id="CYP" data-de="Zypern" data-cz="Kypr" data-state="0" d="M 814.33,680.53 L 818.05,679.01 L 820.69,679.19 L 821.95,682.10 L 827.31,680.43 L 828.78,681.06 L 829.21,682.50 L 815.15,689.77 L 808.44,687.44 L 805.23,680.26 L 811.75,679.60 L 814.33,680.53 Z "/><text class="label" x="815.9" y="685.0">Zypern</text></g>
+<g class="country-group"><path class="country" id="BIH" data-de="Bosnien und Herzegowina" data-cz="Bosna a Hercegovina" data-state="0" d="M 605.26,538.44 L 600.08,530.96 L 588.55,520.31 L 585.57,514.77 L 578.86,506.40 L 581.73,498.97 L 586.65,503.08 L 589.62,499.37 L 596.03,498.97 L 607.82,501.95 L 617.30,501.70 L 623.50,505.66 L 628.48,505.61 L 625.04,513.48 L 631.65,520.36 L 629.65,528.78 L 623.86,531.21 L 619.40,535.37 L 617.39,545.21 L 605.26,538.44 Z "/><text class="label" x="611.9" y="524.6">Bosnien und Herzegowina</text></g>
+<g class="country-group"><path class="country" id="MKD" data-de="Nordmazedonien" data-cz="Severní Makedonie" data-state="0" d="M 676.66,556.85 L 677.63,568.69 L 675.02,569.28 L 672.76,572.40 L 665.33,572.06 L 660.10,575.97 L 651.13,577.55 L 645.44,573.19 L 643.49,565.52 L 645.24,559.43 L 646.98,559.58 L 647.60,555.91 L 655.69,553.14 L 669.79,551.11 L 676.66,556.85 Z "/><text class="label" x="660.7" y="562.5">Nordmazedonien</text></g>
+<g class="country-group"><path class="country" id="SRB" data-de="Serbien" data-cz="Srbsko" data-state="0" d="M 621.09,486.89 L 631.60,482.19 L 640.16,482.98 L 647.60,490.01 L 649.13,495.71 L 657.49,499.92 L 658.56,507.29 L 666.56,512.49 L 670.87,508.48 L 674.25,510.71 L 671.07,513.73 L 673.58,516.85 L 670.20,520.91 L 671.43,527.44 L 678.09,535.17 L 672.87,540.76 L 670.56,546.46 L 672.05,548.59 L 669.79,551.11 L 658.77,552.45 L 658.31,551.11 L 661.49,544.63 L 659.54,544.72 L 648.31,534.08 L 645.85,535.07 L 643.96,541.01 L 640.68,542.30 L 641.80,540.76 L 632.07,535.12 L 626.43,529.57 L 629.65,528.78 L 631.65,520.36 L 625.04,513.48 L 628.48,505.61 L 623.50,505.66 L 628.78,498.93 L 624.43,493.83 L 621.09,486.89 Z "/><text class="label" x="651.0" y="518.6">Serbien</text></g>
+<g class="country-group"><path class="country" id="MNE" data-de="Montenegro" data-cz="Černá Hora" data-state="0" d="M 634.42,547.89 L 633.55,544.53 L 627.60,553.34 L 628.53,559.03 L 625.66,557.65 L 621.81,551.80 L 615.89,548.25 L 617.39,545.21 L 619.40,535.37 L 626.43,529.57 L 632.07,535.12 L 641.80,540.76 L 638.11,546.31 L 634.42,547.89 Z "/><text class="label" x="629.2" y="542.6">Montenegro</text></g>
+<g class="country-group"><path class="country" id="KOS" data-de="Kosovo" data-cz="Kosovo" data-state="0" d="M 644.31,552.94 L 641.03,551.11 L 638.11,546.31 L 640.68,542.30 L 643.96,541.01 L 645.85,535.07 L 648.31,534.08 L 659.54,544.72 L 661.49,544.63 L 658.31,551.11 L 658.77,552.45 L 647.60,555.91 L 646.98,559.58 L 645.24,559.43 L 644.31,552.94 Z "/><text class="label" x="649.5" y="548.7">Kosovo</text></g></svg></div>
+
+
+
+<aside class="card sidebar">
+  <div class="tabs">
+    <button class="tab active" id="quizTab" type="button">Quiz</button>
+    <button class="tab" id="karteTab" type="button">Karte</button>
+  </div>
+
+  <section class="mode-panel active" id="quizPanel">
+    <h2>Quiz: Finde das Land</h2>
+    <div class="selected">
+      <div class="big">A1-Indizien</div>
+      <ol id="quizClues" class="quiz-clues"><li>Klicke auf „Neue Indizien“.</li></ol>
+    </div>
+    <div class="controls">
+      <button id="newQuizBtn" type="button">Neue Indizien</button>
+      <button id="showAnswerBtn" type="button">Lösung anzeigen</button>
+      <button id="labelsBtnQuiz" type="button">Namen ein-/ausblenden</button>
+      <button id="resetBtnQuiz" type="button">Karte zurücksetzen</button>
+    </div>
+    <div class="task" id="feedback">Lies die Indizien und klicke auf das richtige Land.</div>
+  </section>
+
+  <section class="mode-panel" id="kartePanel">
+    <h2>Karte</h2>
+    <div class="selected">
+      <div class="big" id="freeCountryName">Klicke auf ein Land</div>
+      <div class="small" id="freeCountryStatus">Wähle eine Farbe und markiere Länder.</div>
+    </div>
+    <div class="legend" id="freeModes">
+      <label class="active"><input type="radio" name="freeMode" value="1" checked><span class="sw" style="background:var(--green)"></span> Ich war schon dort.</label>
+      <label><input type="radio" name="freeMode" value="2"><span class="sw" style="background:var(--yellow)"></span> Ich möchte dorthin.</label>
+      <label><input type="radio" name="freeMode" value="4"><span class="sw" style="background:var(--red)"></span> Dorthin möchte ich nicht.</label>
+    </div>
+    <div class="controls">
+      <button id="labelsBtnKarte" type="button">Namen ein-/ausblenden</button>
+      <button id="resetBtnKarte" type="button">Karte zurücksetzen</button>
+    </div>
+    <div class="sentence"><strong>Sätze:</strong><br>
+      Ich war schon in ...<br>
+      Ich war noch nie in ...<br>
+      Ich möchte nach ... fahren.<br>
+      Dorthin möchte ich nicht.<br>
+      Dort kann man ...
+    </div>
+    <p class="note">Tipp: Für eine leichtere Variante bleiben die Ländernamen sichtbar. Für eine schwierigere Variante kannst du sie ausblenden.</p>
+  </section>
+</aside>
+
+</div>
+
+
+
+<script>
+const quizItems={"DEU": {"name": "Deutschland", "cz": "Německo", "clues": ["Hier steht das Brandenburger Tor.", "Hier fährt der ICE."]}, "AUT": {"name": "Österreich", "cz": "Rakousko", "clues": ["Hier steht Schloss Schönbrunn.", "Hier isst man Schnitzel."]}, "CHE": {"name": "Schweiz", "cz": "Švýcarsko", "clues": ["Hier bezahlt man mit Franken.", "Hier isst man Käsefondue."]}, "FRA": {"name": "Frankreich", "cz": "Francie", "clues": ["Hier steht der Eiffelturm.", "Hier isst man Croissants."]}, "ITA": {"name": "Italien", "cz": "Itálie", "clues": ["Hier steht das Kolosseum.", "Hier isst man Pizza und Pasta."]}, "ESP": {"name": "Spanien", "cz": "Španělsko", "clues": ["Hier steht die Sagrada Família.", "Hier tanzt man Flamenco."]}, "GRC": {"name": "Griechenland", "cz": "Řecko", "clues": ["Hier steht die Akropolis.", "Hier isst man Gyros."]}, "NLD": {"name": "Niederlande", "cz": "Nizozemsko", "clues": ["Hier gibt es viele Windmühlen.", "Hier fährt man viel Fahrrad."]}, "BEL": {"name": "Belgien", "cz": "Belgie", "clues": ["Hier gibt es das Atomium.", "Hier isst man Waffeln."]}, "DNK": {"name": "Dänemark", "cz": "Dánsko", "clues": ["Hier steht die Kleine Meerjungfrau.", "Hier kommt LEGO her."]}, "SWE": {"name": "Schweden", "cz": "Švédsko", "clues": ["Hier kommt IKEA her.", "Hier gibt es rote Holzhäuser."]}, "NOR": {"name": "Norwegen", "cz": "Norsko", "clues": ["Hier gibt es Fjorde.", "Hier sieht man Nordlichter."]}, "FIN": {"name": "Finnland", "cz": "Finsko", "clues": ["Hier wohnt der Weihnachtsmann.", "Hier gibt es viele Saunen."]}, "ISL": {"name": "Island", "cz": "Island", "clues": ["Hier gibt es Geysire.", "Hier gibt es viele Vulkane."]}, "IRL": {"name": "Irland", "cz": "Irsko", "clues": ["Hier ist der St. Patrick’s Day wichtig.", "Hier gibt es grüne Kleeblätter."]}, "PRT": {"name": "Portugal", "cz": "Portugalsko", "clues": ["Die Hauptstadt heißt Lissabon.", "Hier fährt die gelbe Straßenbahn."]}, "POL": {"name": "Polen", "cz": "Polsko", "clues": ["Hier isst man Pierogi.", "Das Land grenzt an Deutschland."]}, "CZE": {"name": "Tschechien", "cz": "Česko", "clues": ["Hier steht die Karlsbrücke.", "Hier trinkt man viel Bier."]}, "SVK": {"name": "Slowakei", "cz": "Slovensko", "clues": ["Hier gibt es die Hohe Tatra.", "Bratislava liegt an der Donau."]}, "HUN": {"name": "Ungarn", "cz": "Maďarsko", "clues": ["Hier isst man Gulasch.", "Hier gibt es den Plattensee."]}, "HRV": {"name": "Kroatien", "cz": "Chorvatsko", "clues": ["Hier liegt Dubrovnik.", "Hier gibt es viele Inseln."]}, "SVN": {"name": "Slowenien", "cz": "Slovinsko", "clues": ["Hier liegt der Bleder See.", "Ljubljana ist die Hauptstadt."]}, "ROU": {"name": "Rumänien", "cz": "Rumunsko", "clues": ["Hier gibt es Schloss Bran.", "Hier denkt man an Dracula."]}, "BGR": {"name": "Bulgarien", "cz": "Bulharsko", "clues": ["Sofia ist die Hauptstadt.", "Hier schreibt man kyrillisch."]}, "EST": {"name": "Estland", "cz": "Estonsko", "clues": ["Die Hauptstadt heißt Tallinn.", "Das Land liegt an der Ostsee.", "Hier gibt es viele Inseln."]}, "LVA": {"name": "Lettland", "cz": "Lotyšsko", "clues": ["Die Hauptstadt heißt Riga.", "Das Land liegt an der Ostsee.", "Hier gibt es viele Wälder."]}, "LTU": {"name": "Litauen", "cz": "Litva", "clues": ["Die Hauptstadt heißt Vilnius.", "Das Land liegt an der Ostsee.", "Basketball ist hier sehr beliebt."]}, "ALB": {"name": "Albanien", "cz": "Albánie", "clues": ["Die Hauptstadt heißt Tirana.", "Das Land liegt am Adriatischen Meer.", "Hier gibt es viele Bunker."]}, "MDA": {"name": "Moldau", "cz": "Moldavsko", "clues": ["Die Hauptstadt heißt Chișinău.", "Hier spricht man Rumänisch.", "Das Land liegt zwischen Rumänien und der Ukraine."]}, "MNE": {"name": "Montenegro", "cz": "Černá Hora", "clues": ["Die Hauptstadt heißt Podgorica.", "Das Land liegt am Adriatischen Meer.", "Hier liegt die Bucht von Kotor."]}, "MKD": {"name": "Nordmazedonien", "cz": "Severní Makedonie", "clues": ["Die Hauptstadt heißt Skopje.", "Das Land liegt auf dem Balkan.", "Hier liegt der Ohridsee."]}, "KOS": {"name": "Kosovo", "cz": "Kosovo", "clues": ["Die Hauptstadt heißt Pristina.", "Das Land liegt auf dem Balkan.", "Hier bezahlt man mit Euro."]}};
+let currentTarget=null;
+let appMode='quiz';
+let freeMode='1';
+
+const quizPanel=document.getElementById('quizPanel');
+const kartePanel=document.getElementById('kartePanel');
+const quizTab=document.getElementById('quizTab');
+const karteTab=document.getElementById('karteTab');
+
+const quizClues=document.getElementById('quizClues');
+const feedback=document.getElementById('feedback');
+const freeCountryName=document.getElementById('freeCountryName');
+const freeCountryStatus=document.getElementById('freeCountryStatus');
+
+function resetColors(){
+  document.querySelectorAll('.country').forEach(c=>{c.dataset.state=0; c.classList.remove('flash-wrong');});
+}
+
+function setAppMode(mode){
+  appMode=mode;
+  quizPanel.classList.toggle('active', mode==='quiz');
+  kartePanel.classList.toggle('active', mode==='karte');
+  quizTab.classList.toggle('active', mode==='quiz');
+  karteTab.classList.toggle('active', mode==='karte');
+}
+
+function newQuiz(){
+  resetColors();
+  const keys=Object.keys(quizItems).filter(id=>document.getElementById(id));
+  currentTarget=keys[Math.floor(Math.random()*keys.length)];
+  const item=quizItems[currentTarget];
+  quizClues.innerHTML='';
+  item.clues.forEach(t=>{
+    const li=document.createElement('li');
+    li.textContent=t;
+    quizClues.appendChild(li);
+  });
+  feedback.textContent='Welches Land ist das? Klicke auf die Karte.';
+}
+
+function showAnswer(){
+  if(!currentTarget) {
+    feedback.textContent='Klicke zuerst auf „Neue Indizien“.';
+    return;
+  }
+  const item=quizItems[currentTarget];
+  feedback.textContent='Lösung: '+item.name+' ('+item.cz+').';
+}
+
+document.querySelectorAll('input[name="freeMode"]').forEach(input=>{
+  input.addEventListener('change',()=>{
+    freeMode=input.value;
+    document.querySelectorAll('#freeModes label').forEach(l=>l.classList.remove('active'));
+    input.closest('label').classList.add('active');
+  });
+});
+
+document.querySelectorAll('.country').forEach(c=>{
+  c.addEventListener('click',()=>{
+    if(appMode==='karte'){
+      c.dataset.state=freeMode;
+      const labels={1:'Ich war schon dort.',2:'Ich möchte dorthin.',4:'Dorthin möchte ich nicht.'};
+      freeCountryName.textContent=c.dataset.de || c.id;
+      freeCountryStatus.textContent=(c.dataset.cz || '')+' · '+labels[freeMode];
+      return;
+    }
+
+    if(!currentTarget){
+      feedback.textContent='Klicke zuerst auf „Neue Indizien“.';
+      return;
+    }
+    if(c.id===currentTarget){
+      c.dataset.state=3;
+      const item=quizItems[currentTarget];
+      feedback.textContent='Richtig: '+item.name+' ('+item.cz+').';
+    } else {
+      c.dataset.state=0;
+      c.classList.add('flash-wrong');
+      feedback.textContent='Noch nicht. Versuch es noch einmal.';
+      setTimeout(()=>c.classList.remove('flash-wrong'), 650);
+    }
+  });
+});
+
+quizTab.addEventListener('click',()=>setAppMode('quiz'));
+karteTab.addEventListener('click',()=>setAppMode('karte'));
+
+document.getElementById('newQuizBtn').addEventListener('click',newQuiz);
+document.getElementById('showAnswerBtn').addEventListener('click',showAnswer);
+document.getElementById('labelsBtnQuiz').addEventListener('click',()=>document.body.classList.toggle('hide-labels'));
+document.getElementById('labelsBtnKarte').addEventListener('click',()=>document.body.classList.toggle('hide-labels'));
+
+document.getElementById('resetBtnQuiz').addEventListener('click',()=>{
+  resetColors();
+  currentTarget=null;
+  quizClues.innerHTML='<li>Klicke auf „Neue Indizien“.</li>';
+  feedback.textContent='Die Karte ist zurückgesetzt.';
+});
+document.getElementById('resetBtnKarte').addEventListener('click',()=>{
+  resetColors();
+  freeCountryName.textContent='Klicke auf ein Land';
+  freeCountryStatus.textContent='Die Karte ist zurückgesetzt.';
+});
+
+setAppMode('quiz');
+</script>
+</body></html>
+
+
