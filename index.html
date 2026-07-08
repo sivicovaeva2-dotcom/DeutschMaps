@@ -320,6 +320,11 @@ let currentTarget = null;
 let appMode = 'karte';
 let freeMode = '1';
 
+const mapStates = {
+  karte: {},
+  quiz: {}
+};
+
 let quizQueue = [];
 let quizTotal = 0;
 let quizIndex = 0;
@@ -353,11 +358,27 @@ function shuffle(array) {
   return a;
 }
 
-function resetColors() {
+function renderMapState() {
   document.querySelectorAll('.country').forEach(country => {
-    country.dataset.state = '0';
+    const state = mapStates[appMode][country.id] || '0';
+    country.dataset.state = state;
     country.classList.remove('flash-wrong');
   });
+}
+
+function resetCurrentMapState() {
+  mapStates[appMode] = {};
+  renderMapState();
+}
+
+function resetQuizMapState() {
+  mapStates.quiz = {};
+  renderMapState();
+}
+
+function resetKarteMapState() {
+  mapStates.karte = {};
+  renderMapState();
 }
 
 function setMode(mode) {
@@ -366,10 +387,11 @@ function setMode(mode) {
   quizPanel.classList.toggle('active', mode === 'quiz');
   karteTab.classList.toggle('active', mode === 'karte');
   quizTab.classList.toggle('active', mode === 'quiz');
+  renderMapState();
 }
 
 function resetQuiz() {
-  resetColors();
+  resetQuizMapState();
   currentTarget = null;
   quizQueue = [];
   quizTotal = 0;
@@ -390,7 +412,7 @@ function resetQuiz() {
 }
 
 function startQuiz() {
-  resetColors();
+  resetQuizMapState();
   const allKeys = Object.keys(quizItems).filter(id => document.getElementById(id));
   const selectedCount = document.querySelector('input[name="questionCount"]:checked').value;
   let count = selectedCount === 'all' ? allKeys.length : parseInt(selectedCount, 10);
@@ -483,7 +505,14 @@ document.querySelectorAll('input[name="freeMode"]').forEach(input => {
 document.querySelectorAll('.country').forEach(country => {
   country.addEventListener('click', () => {
     if (appMode === 'karte') {
-      country.dataset.state = country.dataset.state === freeMode ? '0' : freeMode;
+      const currentState = mapStates.karte[country.id] || '0';
+      const newState = currentState === freeMode ? '0' : freeMode;
+      if (newState === '0') {
+        delete mapStates.karte[country.id];
+      } else {
+        mapStates.karte[country.id] = newState;
+      }
+      country.dataset.state = newState;
 
       const labels = {
         1: 'Ich war schon dort.',
@@ -492,7 +521,7 @@ document.querySelectorAll('.country').forEach(country => {
       };
 
       freeCountryName.textContent = country.dataset.de || country.id;
-      freeCountryStatus.textContent = country.dataset.state === '0'
+      freeCountryStatus.textContent = newState === '0'
         ? ((country.dataset.cz || '') + ' · nicht markiert')
         : ((country.dataset.cz || '') + ' · ' + labels[freeMode]);
       return;
@@ -501,6 +530,7 @@ document.querySelectorAll('.country').forEach(country => {
     if (!currentTarget || currentAnswered) return;
 
     if (country.id === currentTarget) {
+      mapStates.quiz[country.id] = '3';
       country.dataset.state = '3';
       const item = quizItems[currentTarget];
       correctCount++;
@@ -512,7 +542,7 @@ document.querySelectorAll('.country').forEach(country => {
       nextQuestionBtn.style.display = 'inline-block';
       nextQuestionBtn.textContent = quizIndex >= quizTotal ? 'Ergebnis anzeigen' : 'Nächste Frage';
     } else {
-      country.dataset.state = '0';
+      country.dataset.state = mapStates.quiz[country.id] || '0';
       country.classList.add('flash-wrong');
       feedback.style.display = 'block';
       feedback.textContent = 'Noch nicht. Versuch es noch einmal.';
@@ -531,7 +561,7 @@ document.getElementById('labelsBtnKarte').addEventListener('click', () => docume
 document.getElementById('labelsBtnQuiz').addEventListener('click', () => document.body.classList.toggle('hide-labels'));
 
 document.getElementById('resetBtnKarte').addEventListener('click', () => {
-  resetColors();
+  resetKarteMapState();
   freeCountryName.textContent = 'Sprich über deine Reisen.';
   freeCountryStatus.textContent = 'Wähle eine Farbe und markiere Länder.';
 });
