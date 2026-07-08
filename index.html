@@ -1,41 +1,203 @@
 <!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Interaktivní mapa Evropy – němčina</title>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaktive Karte von Europa</title>
 <style>
-:root{--bg:#f7f4ed;--panel:#fffdfa;--ink:#2b2b2b;--muted:#6b665d;--border:#d8d1c4;--land:#d9d9d9;--stroke:#ffffff;--green:#89c997;--yellow:#f3d66b;--blue:#8eb8e5;--red:#e89b8f;}
-*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
-header{padding:22px 28px 10px} h1{margin:0 0 4px;font-size:28px} .sub{color:var(--muted);font-size:15px}
-.wrap{display:grid;grid-template-columns:minmax(500px,1fr) 360px;gap:18px;padding:12px 24px 24px;}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-.mapcard{padding:12px;overflow:auto} svg{width:100%;height:auto;min-width:760px;background:#cfe4f5;border-radius:14px}
-.country{fill:var(--land);stroke:var(--stroke);stroke-width:.8;cursor:pointer;transition:fill .15s, filter .15s} .country:hover{filter:brightness(.95)}
-.country[data-state="1"]{fill:var(--green)} .country[data-state="2"]{fill:var(--yellow)} .country[data-state="3"]{fill:var(--blue)} .country[data-state="4"]{fill:var(--red)} .country.flash-wrong{filter:brightness(.85);stroke:#c0392b;stroke-width:2}
-.label{font-size:11px;fill:#222;text-anchor:middle;pointer-events:none;font-weight:700;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;opacity:.9} body.hide-labels .label{display:none}
-.sidebar{padding:18px} h2{font-size:19px;margin:0 0 10px} .selected{padding:14px;border:1px solid var(--border);border-radius:14px;background:#fff;margin-bottom:14px;min-height:86px} .big{font-size:24px;font-weight:700}
-.small{color:var(--muted);font-size:14px;margin-top:4px} button{border:1px solid var(--border);background:white;border-radius:12px;padding:9px 11px;cursor:pointer;font-size:14px;margin:3px} button:hover{background:#f1ede6}
-.legend{display:grid;grid-template-columns:1fr;gap:6px;margin:12px 0} .leg{display:flex;align-items:center;gap:8px;font-size:14px} .sw{width:18px;height:18px;border-radius:5px;border:1px solid #aaa} .task{font-size:18px;line-height:1.35;padding:14px;background:#fff;border:1px solid var(--border);border-radius:14px;margin:10px 0;min-height:94px} .sentence{font-size:14px;line-height:1.5;background:#f5f2eb;padding:12px;border-radius:12px;margin-top:12px} .controls{display:flex;flex-wrap:wrap;margin:8px 0 12px}.modes{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0 12px}.mode{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer;font-size:14px}.mode input{margin:0}.mode .sw{flex:0 0 auto}.mode.active{outline:2px solid #8b7d6b;background:#f8f3e8} .note{font-size:13px;color:var(--muted);line-height:1.4} @media(max-width:900px){.wrap{grid-template-columns:1fr}.sidebar{order:-1}}
+:root {
+  --bg:#f7f4ed;
+  --panel:#fffdfa;
+  --ink:#2b2b2b;
+  --muted:#6b665d;
+  --border:#d8d1c4;
+  --land:#d9d9d9;
+  --stroke:#ffffff;
+  --green:#89c997;
+  --yellow:#f3d66b;
+  --blue:#8eb8e5;
+  --red:#e89b8f;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+header { padding:22px 28px 8px; }
+h1 { margin:0; font-size:28px; }
+h2 { font-size:19px; margin:0 0 10px; }
+h3 { font-size:16px; margin:0 0 10px; }
+.wrap {
+  display:grid;
+  grid-template-columns:minmax(500px,1fr) 360px;
+  gap:18px;
+  padding:12px 24px 24px;
+}
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+.mapcard { padding:12px; overflow:auto; }
+svg {
+  width:100%;
+  height:auto;
+  min-width:760px;
+  background:#cfe4f5;
+  border-radius:14px;
+}
+.country {
+  fill:var(--land);
+  stroke:var(--stroke);
+  stroke-width:.8;
+  cursor:pointer;
+  transition:fill .15s, filter .15s, stroke .15s;
+}
+.country:hover { filter:brightness(.95); }
+.country[data-state="1"] { fill:var(--green); }
+.country[data-state="2"] { fill:var(--yellow); }
+.country[data-state="3"] { fill:var(--blue); }
+.country[data-state="4"] { fill:var(--red); }
+.country.flash-wrong { filter:brightness(.85); stroke:#c0392b; stroke-width:2; }
+.label {
+  font-size:11px;
+  fill:#222;
+  text-anchor:middle;
+  pointer-events:none;
+  font-weight:700;
+  text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;
+  opacity:.9;
+}
+body.hide-labels .label { display:none; }
+.sidebar { padding:18px; }
+.tabs { display:flex; gap:8px; margin-bottom:14px; }
+.tab {
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  cursor:pointer;
+}
+.tab.active { background:#2b2b2b; color:#fff; }
+.mode-panel { display:none; }
+.mode-panel.active { display:block; }
+.selected {
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+  margin-bottom:14px;
+  min-height:78px;
+}
+.big { font-size:22px; font-weight:700; }
+.small { color:var(--muted); font-size:14px; margin-top:6px; line-height:1.35; }
+.legend { display:grid; gap:8px; margin:10px 0; }
+.legend label,
+.level-switch label,
+.question-count label {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  cursor:pointer;
+}
+.legend label.active,
+.level-switch label.active,
+.question-count label.active { outline:2px solid #333; }
+.sw {
+  width:18px;
+  height:18px;
+  border-radius:4px;
+  border:1px solid rgba(0,0,0,.12);
+  display:inline-block;
+  flex:0 0 auto;
+}
+.controls {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:12px 0;
+}
+button {
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:9px 12px;
+  background:#fff;
+  cursor:pointer;
+  font-size:14px;
+}
+button.primary,
+#startQuizBtn,
+#nextQuestionBtn {
+  background:#2b2b2b;
+  color:#fff;
+}
+.task {
+  border:1px dashed var(--border);
+  border-radius:14px;
+  padding:14px;
+  line-height:1.4;
+  background:#fff;
+  min-height:48px;
+}
+.sentence {
+  margin-top:12px;
+  padding:14px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid var(--border);
+  line-height:1.45;
+}
+.note {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+.level-switch {
+  display:flex;
+  gap:8px;
+  margin:0 0 12px;
+}
+.quiz-setup {
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+  margin-bottom:14px;
+}
+.question-count {
+  display:grid;
+  gap:8px;
+  margin-bottom:12px;
+}
+.quiz-clues {
+  margin:8px 0 0 20px;
+  padding:0;
+}
+.quiz-clues li {
+  margin:7px 0;
+  line-height:1.35;
+}
+@media (max-width:900px) {
+  .wrap { grid-template-columns:1fr; }
+  svg { min-width:680px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Interaktive Karte von Europa</h1>
+</header>
 
-/* robust mode panels */
-.mode-panel{display:none;}
-.mode-panel.active{display:block;}
-.tabs{display:flex;gap:8px;margin-bottom:14px;}
-.tab{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;}
-.tab.active{background:#2b2b2b;color:#fff;}
-.quiz-clues{margin:8px 0 0 20px;padding:0;}
-.quiz-clues li{margin:7px 0;line-height:1.35;}
-.legend{display:grid;gap:8px;margin:10px 0;}
-.legend label{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;}
-.legend label.active{outline:2px solid #333;}
-.country.flash-wrong{filter:brightness(.85);stroke:#c0392b;stroke-width:2;}
-
-
-.level-switch{display:flex;gap:8px;margin:0 0 12px}
-.level-switch label{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
-.level-switch label.active{background:#2b2b2b;color:#fff}
-
-</style></head><body>
-<header><h1>Interaktivní mapa Evropy – Deutsch im Unterricht</h1><div class="sub">Vyber režim/barvu a pak klikej na státy. Název slouží jako kontrola, úkoly jsou zvlášť vpravo.</div></header>
-<div class="wrap"><div class="card mapcard"><svg viewBox="0 0 1000 720" aria-label="Mapa Evropy"><rect x="0" y="0" width="1000" height="720" fill="#cfe4f5"/><g class="country-group"><path class="country" id="RUS" data-de="Russland" data-cz="Rusko" data-state="0" d="M 973.66,544.10 L 965.34,546.91 L 962.94,543.59 L 944.27,535.01 L 924.08,532.11 L 912.48,529.05 L 910.81,531.16 L 893.33,516.04 L 877.68,509.29 L 865.83,498.78 L 875.81,495.92 L 887.19,480.95 L 879.53,473.87 L 899.74,466.57 L 899.38,462.66 L 887.07,465.54 L 887.50,457.59 L 894.57,452.59 L 907.84,451.28 L 910.00,445.31 L 906.97,435.45 L 912.54,426.08 L 912.38,420.82 L 892.16,415.00 L 884.15,415.19 L 875.68,406.81 L 865.16,409.65 L 847.74,403.36 L 848.04,399.83 L 843.16,392.08 L 832.23,391.21 L 831.09,385.65 L 834.52,382.03 L 825.75,371.90 L 811.53,373.63 L 807.37,372.73 L 803.90,376.80 L 798.78,376.08 L 795.41,364.62 L 792.19,358.68 L 794.82,357.00 L 805.89,357.62 L 811.23,353.71 L 807.28,348.94 L 798.03,345.79 L 798.85,342.56 L 793.27,339.29 L 784.67,327.58 L 787.61,322.75 L 786.27,314.35 L 772.86,310.08 L 765.67,312.22 L 763.72,307.78 L 749.28,303.29 L 744.87,292.73 L 743.70,284.05 L 737.10,279.93 L 742.97,274.25 L 738.90,257.56 L 748.66,247.25 L 746.60,244.12 L 762.19,234.23 L 747.82,225.73 L 789.92,192.55 L 795.08,183.42 L 774.78,171.16 L 780.38,159.50 L 768.04,146.18 L 777.27,130.84 L 761.32,110.47 L 773.98,96.98 L 752.97,85.05 L 754.98,72.53 L 766.05,70.88 L 789.39,63.70 L 803.53,57.47 L 826.06,68.29 L 863.62,72.55 L 915.44,92.79 L 925.96,101.29 L 926.87,113.20 L 911.65,122.61 L 889.25,127.38 L 828.03,113.78 L 817.96,116.05 L 840.32,129.16 L 842.09,155.74 L 859.74,161.20 L 870.46,165.85 L 872.23,157.17 L 863.97,149.48 L 872.70,142.70 L 905.85,153.84 L 917.40,149.48 L 908.17,136.37 L 940.13,118.85 L 952.79,119.88 L 965.60,126.13 L 973.59,113.83 L 962.15,103.17 L 968.86,92.46 L 958.78,81.36 L 980.00,84.54 L 980.00,545.96 L 973.66,544.10 Z  M 649.38,336.51 L 632.49,334.48 L 635.61,326.61 L 654.54,320.80 L 668.90,323.94 L 674.96,326.78 L 673.50,331.68 L 674.60,336.24 L 649.38,336.51 Z  M 825.02,481.33 L 839.18,485.88 L 840.96,489.41 L 843.03,489.96 L 843.14,491.50 L 849.85,495.82 L 863.84,494.75 L 861.16,501.13 L 846.15,504.23 L 827.53,514.58 L 819.91,510.94 L 822.93,502.54 L 807.94,497.30 L 810.37,493.87 L 823.49,487.92 L 821.41,485.77 L 825.02,481.33 Z "/><text class="label" x="863.5" y="298.0">Russland</text></g>
+<div class="wrap">
+  <div class="card mapcard">
+    <svg viewBox="0 0 1000 720" aria-label="Mapa Evropy"><rect x="0" y="0" width="1000" height="720" fill="#cfe4f5"/><g class="country-group"><path class="country" id="RUS" data-de="Russland" data-cz="Rusko" data-state="0" d="M 973.66,544.10 L 965.34,546.91 L 962.94,543.59 L 944.27,535.01 L 924.08,532.11 L 912.48,529.05 L 910.81,531.16 L 893.33,516.04 L 877.68,509.29 L 865.83,498.78 L 875.81,495.92 L 887.19,480.95 L 879.53,473.87 L 899.74,466.57 L 899.38,462.66 L 887.07,465.54 L 887.50,457.59 L 894.57,452.59 L 907.84,451.28 L 910.00,445.31 L 906.97,435.45 L 912.54,426.08 L 912.38,420.82 L 892.16,415.00 L 884.15,415.19 L 875.68,406.81 L 865.16,409.65 L 847.74,403.36 L 848.04,399.83 L 843.16,392.08 L 832.23,391.21 L 831.09,385.65 L 834.52,382.03 L 825.75,371.90 L 811.53,373.63 L 807.37,372.73 L 803.90,376.80 L 798.78,376.08 L 795.41,364.62 L 792.19,358.68 L 794.82,357.00 L 805.89,357.62 L 811.23,353.71 L 807.28,348.94 L 798.03,345.79 L 798.85,342.56 L 793.27,339.29 L 784.67,327.58 L 787.61,322.75 L 786.27,314.35 L 772.86,310.08 L 765.67,312.22 L 763.72,307.78 L 749.28,303.29 L 744.87,292.73 L 743.70,284.05 L 737.10,279.93 L 742.97,274.25 L 738.90,257.56 L 748.66,247.25 L 746.60,244.12 L 762.19,234.23 L 747.82,225.73 L 789.92,192.55 L 795.08,183.42 L 774.78,171.16 L 780.38,159.50 L 768.04,146.18 L 777.27,130.84 L 761.32,110.47 L 773.98,96.98 L 752.97,85.05 L 754.98,72.53 L 766.05,70.88 L 789.39,63.70 L 803.53,57.47 L 826.06,68.29 L 863.62,72.55 L 915.44,92.79 L 925.96,101.29 L 926.87,113.20 L 911.65,122.61 L 889.25,127.38 L 828.03,113.78 L 817.96,116.05 L 840.32,129.16 L 842.09,155.74 L 859.74,161.20 L 870.46,165.85 L 872.23,157.17 L 863.97,149.48 L 872.70,142.70 L 905.85,153.84 L 917.40,149.48 L 908.17,136.37 L 940.13,118.85 L 952.79,119.88 L 965.60,126.13 L 973.59,113.83 L 962.15,103.17 L 968.86,92.46 L 958.78,81.36 L 980.00,84.54 L 980.00,545.96 L 973.66,544.10 Z  M 649.38,336.51 L 632.49,334.48 L 635.61,326.61 L 654.54,320.80 L 668.90,323.94 L 674.96,326.78 L 673.50,331.68 L 674.60,336.24 L 649.38,336.51 Z  M 825.02,481.33 L 839.18,485.88 L 840.96,489.41 L 843.03,489.96 L 843.14,491.50 L 849.85,495.82 L 863.84,494.75 L 861.16,501.13 L 846.15,504.23 L 827.53,514.58 L 819.91,510.94 L 822.93,502.54 L 807.94,497.30 L 810.37,493.87 L 823.49,487.92 L 821.41,485.77 L 825.02,481.33 Z "/><text class="label" x="863.5" y="298.0">Russland</text></g>
 <g class="country-group"><path class="country" id="NOR" data-de="Norwegen" data-cz="Norsko" data-state="0" d="M 766.05,70.88 L 754.98,72.53 L 760.79,59.97 L 743.19,52.85 L 721.89,58.92 L 715.17,72.04 L 702.09,79.96 L 687.37,75.63 L 669.46,76.52 L 654.22,67.06 L 646.00,71.78 L 637.49,72.52 L 635.48,84.29 L 609.63,81.43 L 606.00,91.39 L 592.83,91.33 L 570.06,123.90 L 548.76,149.07 L 553.76,155.19 L 548.99,162.28 L 535.38,161.97 L 526.48,178.76 L 527.32,202.52 L 536.08,211.59 L 531.55,232.63 L 520.14,244.89 L 514.09,255.21 L 504.89,244.22 L 477.81,264.92 L 459.53,269.11 L 440.56,260.00 L 435.66,240.76 L 431.32,199.47 L 443.95,187.95 L 480.16,172.93 L 507.24,154.46 L 565.30,94.97 L 625.95,59.06 L 656.05,51.22 L 678.61,52.17 L 699.50,37.35 L 724.50,38.14 L 749.13,34.58 L 792.02,47.67 L 774.36,52.46 L 789.39,63.70 L 766.05,70.88 Z "/><text class="label" x="530.4" y="151.8">Norwegen</text></g>
 <g class="country-group"><path class="country" id="FRA" data-de="Frankreich" data-cz="Francie" data-state="0" d="M 454.17,427.96 L 473.93,431.26 L 467.00,443.51 L 465.26,456.26 L 461.49,459.32 L 455.24,457.67 L 455.69,462.22 L 445.66,472.28 L 445.45,480.38 L 452.00,477.57 L 456.71,485.42 L 456.15,490.48 L 460.18,497.20 L 455.43,502.65 L 458.96,516.49 L 466.39,518.76 L 464.83,526.53 L 452.40,536.64 L 425.35,531.80 L 405.38,537.60 L 403.81,548.38 L 387.91,550.70 L 372.48,542.60 L 367.49,546.47 L 342.25,538.34 L 336.78,531.38 L 343.87,520.65 L 346.49,485.00 L 332.33,466.22 L 322.22,457.16 L 301.26,450.28 L 299.88,437.23 L 317.66,433.34 L 340.69,437.94 L 336.34,417.69 L 349.29,425.36 L 381.22,411.41 L 385.33,396.74 L 397.33,393.13 L 399.32,399.42 L 405.69,399.72 L 412.07,406.90 L 421.64,415.34 L 428.68,413.95 L 440.67,422.10 L 443.74,423.66 L 447.70,423.28 L 454.17,427.96 Z  M 491.63,538.77 L 493.97,554.11 L 489.44,567.94 L 483.21,564.29 L 480.03,552.25 L 482.80,545.60 L 491.63,538.77 Z "/><text class="label" x="391.6" y="469.2">Frankreich</text></g>
 <g class="country-group"><path class="country" id="SWE" data-de="Schweden" data-cz="Švédsko" data-state="0" d="M 520.14,244.89 L 531.55,232.63 L 536.08,211.59 L 527.32,202.52 L 526.48,178.76 L 535.38,161.97 L 548.99,162.28 L 553.76,155.19 L 548.76,149.07 L 570.06,123.90 L 592.83,91.33 L 606.00,91.39 L 609.63,81.43 L 635.48,84.29 L 637.49,72.52 L 646.00,71.78 L 664.28,80.54 L 685.68,92.72 L 686.05,120.28 L 690.67,127.24 L 667.08,132.31 L 653.79,144.80 L 655.93,155.76 L 634.11,170.14 L 607.63,185.54 L 597.64,210.74 L 607.40,223.35 L 620.52,233.27 L 607.92,253.46 L 593.66,257.65 L 588.43,287.69 L 580.64,304.45 L 564.00,302.72 L 556.24,316.91 L 540.36,317.74 L 536.00,300.82 L 524.52,280.51 L 514.09,255.21 L 520.14,244.89 Z "/><text class="label" x="565.6" y="194.0">Schweden</text></g>
@@ -76,192 +238,307 @@ header{padding:22px 28px 10px} h1{margin:0 0 4px;font-size:28px} .sub{color:var(
 <g class="country-group"><path class="country" id="MKD" data-de="Nordmazedonien" data-cz="Severní Makedonie" data-state="0" d="M 676.66,556.85 L 677.63,568.69 L 675.02,569.28 L 672.76,572.40 L 665.33,572.06 L 660.10,575.97 L 651.13,577.55 L 645.44,573.19 L 643.49,565.52 L 645.24,559.43 L 646.98,559.58 L 647.60,555.91 L 655.69,553.14 L 669.79,551.11 L 676.66,556.85 Z "/><text class="label" x="660.7" y="562.5">Nordmazedonien</text></g>
 <g class="country-group"><path class="country" id="SRB" data-de="Serbien" data-cz="Srbsko" data-state="0" d="M 621.09,486.89 L 631.60,482.19 L 640.16,482.98 L 647.60,490.01 L 649.13,495.71 L 657.49,499.92 L 658.56,507.29 L 666.56,512.49 L 670.87,508.48 L 674.25,510.71 L 671.07,513.73 L 673.58,516.85 L 670.20,520.91 L 671.43,527.44 L 678.09,535.17 L 672.87,540.76 L 670.56,546.46 L 672.05,548.59 L 669.79,551.11 L 658.77,552.45 L 658.31,551.11 L 661.49,544.63 L 659.54,544.72 L 648.31,534.08 L 645.85,535.07 L 643.96,541.01 L 640.68,542.30 L 641.80,540.76 L 632.07,535.12 L 626.43,529.57 L 629.65,528.78 L 631.65,520.36 L 625.04,513.48 L 628.48,505.61 L 623.50,505.66 L 628.78,498.93 L 624.43,493.83 L 621.09,486.89 Z "/><text class="label" x="651.0" y="518.6">Serbien</text></g>
 <g class="country-group"><path class="country" id="MNE" data-de="Montenegro" data-cz="Černá Hora" data-state="0" d="M 634.42,547.89 L 633.55,544.53 L 627.60,553.34 L 628.53,559.03 L 625.66,557.65 L 621.81,551.80 L 615.89,548.25 L 617.39,545.21 L 619.40,535.37 L 626.43,529.57 L 632.07,535.12 L 641.80,540.76 L 638.11,546.31 L 634.42,547.89 Z "/><text class="label" x="629.2" y="542.6">Montenegro</text></g>
-<g class="country-group"><path class="country" id="KOS" data-de="Kosovo" data-cz="Kosovo" data-state="0" d="M 644.31,552.94 L 641.03,551.11 L 638.11,546.31 L 640.68,542.30 L 643.96,541.01 L 645.85,535.07 L 648.31,534.08 L 659.54,544.72 L 661.49,544.63 L 658.31,551.11 L 658.77,552.45 L 647.60,555.91 L 646.98,559.58 L 645.24,559.43 L 644.31,552.94 Z "/><text class="label" x="649.5" y="548.7">Kosovo</text></g></svg></div>
-
-
-
-<aside class="card sidebar">
-  <div class="tabs">
-    <button class="tab active" id="quizTab" type="button">Quiz</button>
-    <button class="tab" id="karteTab" type="button">Karte</button>
+<g class="country-group"><path class="country" id="KOS" data-de="Kosovo" data-cz="Kosovo" data-state="0" d="M 644.31,552.94 L 641.03,551.11 L 638.11,546.31 L 640.68,542.30 L 643.96,541.01 L 645.85,535.07 L 648.31,534.08 L 659.54,544.72 L 661.49,544.63 L 658.31,551.11 L 658.77,552.45 L 647.60,555.91 L 646.98,559.58 L 645.24,559.43 L 644.31,552.94 Z "/><text class="label" x="649.5" y="548.7">Kosovo</text></g></svg>
   </div>
 
-  <section class="mode-panel active" id="quizPanel">
-    <h2>Quiz: Finde das Land</h2>
-
-    <div class="level-switch" id="levelSwitch">
-      <label class="active"><input type="radio" name="quizLevel" value="A1" checked> A1</label>
-      <label><input type="radio" name="quizLevel" value="B12"> B1–B2</label>
+  <aside class="card sidebar">
+    <div class="tabs">
+      <button class="tab active" id="karteTab" type="button">Meine Karte</button>
+      <button class="tab" id="quizTab" type="button">Quiz</button>
     </div>
 
-    <div class="selected">
-      <div class="big">A1-Indizien</div>
-      <ol id="quizClues" class="quiz-clues"><li>Klicke auf „Neue Indizien“.</li></ol>
-    </div>
-    <div class="controls">
-      <button id="newQuizBtn" type="button">Neue Indizien</button>
-      <button id="showAnswerBtn" type="button">Lösung anzeigen</button>
-      <button id="labelsBtnQuiz" type="button">Namen ein-/ausblenden</button>
-      <button id="resetBtnQuiz" type="button">Karte zurücksetzen</button>
-    </div>
-    <div class="task" id="feedback">Lies die Indizien und klicke auf das richtige Land.</div>
-  </section>
+    <section class="mode-panel active" id="kartePanel">
+      <h2>Meine Karte</h2>
+      <div class="selected">
+        <div class="big" id="freeCountryName">Sprich über deine Reisen.</div>
+        <div class="small" id="freeCountryStatus">Wähle eine Farbe und markiere Länder.</div>
+      </div>
 
-  <section class="mode-panel" id="kartePanel">
-    <h2>Karte</h2>
-    <div class="selected">
-      <div class="big" id="freeCountryName">Klicke auf ein Land</div>
-      <div class="small" id="freeCountryStatus">Wähle eine Farbe und markiere Länder.</div>
-    </div>
-    <div class="legend" id="freeModes">
-      <label class="active"><input type="radio" name="freeMode" value="1" checked><span class="sw" style="background:var(--green)"></span> Ich war schon dort.</label>
-      <label><input type="radio" name="freeMode" value="2"><span class="sw" style="background:var(--yellow)"></span> Ich möchte dorthin.</label>
-      <label><input type="radio" name="freeMode" value="4"><span class="sw" style="background:var(--red)"></span> Dorthin möchte ich nicht.</label>
-    </div>
-    <div class="controls">
-      <button id="labelsBtnKarte" type="button">Namen ein-/ausblenden</button>
-      <button id="resetBtnKarte" type="button">Karte zurücksetzen</button>
-    </div>
-    <div class="sentence"><strong>Sätze:</strong><br>
-      Ich war schon in ...<br>
-      Ich war noch nie in ...<br>
-      Ich möchte nach ... fahren.<br>
-      Dorthin möchte ich nicht.<br>
-      Dort kann man ...
-    </div>
-    <p class="note">Tipp: Für eine leichtere Variante bleiben die Ländernamen sichtbar. Für eine schwierigere Variante kannst du sie ausblenden.</p>
-  </section>
-</aside>
+      <div class="legend" id="freeModes">
+        <label class="active"><input type="radio" name="freeMode" value="1" checked><span class="sw" style="background:var(--green)"></span> Ich war schon dort.</label>
+        <label><input type="radio" name="freeMode" value="2"><span class="sw" style="background:var(--yellow)"></span> Ich möchte dorthin.</label>
+        <label><input type="radio" name="freeMode" value="4"><span class="sw" style="background:var(--red)"></span> Dorthin möchte ich nicht.</label>
+      </div>
 
+      <div class="controls">
+        <button id="labelsBtnKarte" type="button">Namen ein-/ausblenden</button>
+        <button id="resetBtnKarte" type="button">Karte zurücksetzen</button>
+      </div>
+
+      <div class="sentence">
+        <strong>Sätze:</strong><br>
+        Ich war schon in ...<br>
+        Ich war noch nie in ...<br>
+        Ich möchte nach ... fahren.<br>
+        Dorthin möchte ich nicht.<br>
+        Dort kann man ...
+      </div>
+    </section>
+
+    <section class="mode-panel" id="quizPanel">
+      <h2>Quiz: Finde das Land</h2>
+
+      <div class="level-switch" id="levelSwitch">
+        <label class="active"><input type="radio" name="quizLevel" value="A1" checked> A1</label>
+        <label><input type="radio" name="quizLevel" value="B12"> B1–B2</label>
+      </div>
+
+      <div class="quiz-setup" id="quizSetup">
+        <h3>Wie viele Fragen?</h3>
+        <div class="question-count" id="questionCount">
+          <label class="active"><input type="radio" name="questionCount" value="10" checked> 10 Fragen</label>
+          <label><input type="radio" name="questionCount" value="20"> 20 Fragen</label>
+          <label><input type="radio" name="questionCount" value="all"> Alle Länder</label>
+        </div>
+        <button id="startQuizBtn" type="button">Quiz starten</button>
+      </div>
+
+      <div class="selected" id="quizCard" style="display:none;">
+        <div class="big" id="progressText"></div>
+        <ol id="quizClues" class="quiz-clues"></ol>
+      </div>
+
+      <div class="controls" id="quizControls" style="display:none;">
+        <button id="nextQuestionBtn" type="button" style="display:none;">Nächste Frage</button>
+        <button id="showAnswerBtn" type="button">Lösung anzeigen</button>
+        <button id="labelsBtnQuiz" type="button">Namen ein-/ausblenden</button>
+        <button id="resetBtnQuiz" type="button">Quiz zurücksetzen</button>
+      </div>
+
+      <div class="task" id="feedback" style="display:none;"></div>
+    </section>
+  </aside>
 </div>
 
-
-
 <script>
-const quizItemsA1={"DEU": {"name": "Deutschland", "cz": "Německo", "clues": ["Hier steht das Brandenburger Tor.", "Hier fährt der ICE."]}, "AUT": {"name": "Österreich", "cz": "Rakousko", "clues": ["Hier steht Schloss Schönbrunn.", "Hier isst man Schnitzel."]}, "CHE": {"name": "Schweiz", "cz": "Švýcarsko", "clues": ["Hier bezahlt man mit Franken.", "Hier isst man Käsefondue."]}, "FRA": {"name": "Frankreich", "cz": "Francie", "clues": ["Hier steht der Eiffelturm.", "Hier isst man Croissants."]}, "ITA": {"name": "Italien", "cz": "Itálie", "clues": ["Hier steht das Kolosseum.", "Hier isst man Pizza und Pasta."]}, "ESP": {"name": "Spanien", "cz": "Španělsko", "clues": ["Hier steht die Sagrada Família.", "Hier tanzt man Flamenco."]}, "GRC": {"name": "Griechenland", "cz": "Řecko", "clues": ["Hier steht die Akropolis.", "Hier isst man Gyros."]}, "NLD": {"name": "Niederlande", "cz": "Nizozemsko", "clues": ["Hier gibt es viele Windmühlen.", "Hier fährt man viel Fahrrad."]}, "BEL": {"name": "Belgien", "cz": "Belgie", "clues": ["Hier gibt es das Atomium.", "Hier isst man Waffeln."]}, "DNK": {"name": "Dänemark", "cz": "Dánsko", "clues": ["Hier steht die Kleine Meerjungfrau.", "Hier kommt LEGO her."]}, "SWE": {"name": "Schweden", "cz": "Švédsko", "clues": ["Hier kommt IKEA her.", "Hier gibt es rote Holzhäuser."]}, "NOR": {"name": "Norwegen", "cz": "Norsko", "clues": ["Hier gibt es Fjorde.", "Hier sieht man Nordlichter."]}, "FIN": {"name": "Finnland", "cz": "Finsko", "clues": ["Hier wohnt der Weihnachtsmann.", "Hier gibt es viele Saunen."]}, "ISL": {"name": "Island", "cz": "Island", "clues": ["Hier gibt es Geysire.", "Hier gibt es viele Vulkane."]}, "IRL": {"name": "Irland", "cz": "Irsko", "clues": ["Hier ist der St. Patrick’s Day wichtig.", "Hier gibt es grüne Kleeblätter."]}, "PRT": {"name": "Portugal", "cz": "Portugalsko", "clues": ["Die Hauptstadt heißt Lissabon.", "Hier fährt die gelbe Straßenbahn."]}, "POL": {"name": "Polen", "cz": "Polsko", "clues": ["Hier isst man Pierogi.", "Das Land grenzt an Deutschland."]}, "CZE": {"name": "Tschechien", "cz": "Česko", "clues": ["Hier steht die Karlsbrücke.", "Hier trinkt man viel Bier."]}, "SVK": {"name": "Slowakei", "cz": "Slovensko", "clues": ["Hier gibt es die Hohe Tatra.", "Bratislava liegt an der Donau."]}, "HUN": {"name": "Ungarn", "cz": "Maďarsko", "clues": ["Hier isst man Gulasch.", "Hier gibt es den Plattensee."]}, "HRV": {"name": "Kroatien", "cz": "Chorvatsko", "clues": ["Hier liegt Dubrovnik.", "Hier gibt es viele Inseln."]}, "SVN": {"name": "Slowenien", "cz": "Slovinsko", "clues": ["Hier liegt der Bleder See.", "Ljubljana ist die Hauptstadt."]}, "ROU": {"name": "Rumänien", "cz": "Rumunsko", "clues": ["Hier gibt es Schloss Bran.", "Hier denkt man an Dracula."]}, "BGR": {"name": "Bulgarien", "cz": "Bulharsko", "clues": ["Sofia ist die Hauptstadt.", "Hier schreibt man kyrillisch."]}, "EST": {"name": "Estland", "cz": "Estonsko", "clues": ["Die Hauptstadt heißt Tallinn.", "Das Land liegt an der Ostsee.", "Hier gibt es viele Inseln."]}, "LVA": {"name": "Lettland", "cz": "Lotyšsko", "clues": ["Die Hauptstadt heißt Riga.", "Das Land liegt an der Ostsee.", "Hier gibt es viele Wälder."]}, "LTU": {"name": "Litauen", "cz": "Litva", "clues": ["Die Hauptstadt heißt Vilnius.", "Das Land liegt an der Ostsee.", "Basketball ist hier sehr beliebt."]}, "ALB": {"name": "Albanien", "cz": "Albánie", "clues": ["Die Hauptstadt heißt Tirana.", "Das Land liegt am Adriatischen Meer.", "Hier gibt es viele Bunker."]}, "MDA": {"name": "Moldau", "cz": "Moldavsko", "clues": ["Die Hauptstadt heißt Chișinău.", "Hier spricht man Rumänisch.", "Das Land liegt zwischen Rumänien und der Ukraine."]}, "MNE": {"name": "Montenegro", "cz": "Černá Hora", "clues": ["Die Hauptstadt heißt Podgorica.", "Das Land liegt am Adriatischen Meer.", "Hier liegt die Bucht von Kotor."]}, "MKD": {"name": "Nordmazedonien", "cz": "Severní Makedonie", "clues": ["Die Hauptstadt heißt Skopje.", "Das Land liegt auf dem Balkan.", "Hier liegt der Ohridsee."]}, "KOS": {"name": "Kosovo", "cz": "Kosovo", "clues": ["Die Hauptstadt heißt Pristina.", "Das Land liegt auf dem Balkan.", "Hier bezahlt man mit Euro."]}};
-const quizItemsB12={"DEU": {"name": "Deutschland", "cz": "Německo", "clues": ["Das Land hat 16 Bundesländer.", "Die Wiedervereinigung prägt seine moderne Geschichte."]}, "AUT": {"name": "Österreich", "cz": "Rakousko", "clues": ["Das Land ist für Wintersport sehr bekannt.", "Kaffeehäuser und klassische Musik sind kulturell wichtig."]}, "CHE": {"name": "Schweiz", "cz": "Švýcarsko", "clues": ["Das Land ist nicht in der EU.", "Es ist für Neutralität und mehrere Amtssprachen bekannt."]}, "FRA": {"name": "Frankreich", "cz": "Francie", "clues": ["Das Land gilt als stark zentralisiert.", "Die Hauptstadt dominiert Politik, Wirtschaft und Kultur."]}, "ITA": {"name": "Italien", "cz": "Itálie", "clues": ["Zwischen Norden und Süden gibt es große wirtschaftliche Unterschiede.", "Das Land ist stark von Tourismus, Design und Industrie geprägt."]}, "ESP": {"name": "Spanien", "cz": "Španělsko", "clues": ["Das Land besteht aus verschiedenen autonomen Regionen.", "Katalonien und das Baskenland haben starke regionale Identitäten."]}, "GRC": {"name": "Griechenland", "cz": "Řecko", "clues": ["Die Antike prägt bis heute das Bild des Landes.", "Viele Inseln leben stark vom Tourismus."]}, "NLD": {"name": "Niederlande", "cz": "Nizozemsko", "clues": ["Ein großer Teil des Landes liegt sehr niedrig.", "Das Land ist für Wasserbau und Fahrradkultur bekannt."]}, "BEL": {"name": "Belgien", "cz": "Belgie", "clues": ["In diesem Land gibt es mehrere Sprachgemeinschaften.", "Die EU-Institutionen spielen hier eine wichtige Rolle."]}, "DNK": {"name": "Dänemark", "cz": "Dánsko", "clues": ["Das Land gehört zu Skandinavien.", "Es ist für hohe Lebensqualität und Design bekannt."]}, "SWE": {"name": "Schweden", "cz": "Švédsko", "clues": ["Das Land steht oft für Sozialstaat und Gleichberechtigung.", "Viele internationale Firmen kommen von hier."]}, "NOR": {"name": "Norwegen", "cz": "Norsko", "clues": ["Das Land ist nicht in der EU.", "Öl, Gas und Fjorde prägen das Land stark."]}, "FIN": {"name": "Finnland", "cz": "Finsko", "clues": ["Das Land hat ein sehr bekanntes Bildungssystem.", "Sauna und Natur spielen eine große Rolle im Alltag."]}, "ISL": {"name": "Island", "cz": "Island", "clues": ["Das Land liegt auf einer vulkanisch aktiven Insel.", "Energie aus Erdwärme spielt eine wichtige Rolle."]}, "IRL": {"name": "Irland", "cz": "Irsko", "clues": ["Auswanderung prägt die Geschichte des Landes stark.", "Viele internationale Firmen haben hier ihren europäischen Sitz."]}, "PRT": {"name": "Portugal", "cz": "Portugalsko", "clues": ["Die Hauptstadt heißt Lissabon.", "Das Land war früher eine wichtige Seemacht."]}, "POL": {"name": "Polen", "cz": "Polsko", "clues": ["Das Land hat eine lange gemeinsame Geschichte mit Deutschland.", "Nach 1989 veränderte sich Politik und Wirtschaft stark."]}, "CZE": {"name": "Tschechien", "cz": "Česko", "clues": ["Das Land liegt im Herzen Mitteleuropas.", "Industrie, Bierkultur und Prag prägen sein Bild im Ausland."]}, "SVK": {"name": "Slowakei", "cz": "Slovensko", "clues": ["Die Hauptstadt heißt Bratislava.", "Die Hohe Tatra ist ein wichtiges Naturgebiet."]}, "HUN": {"name": "Ungarn", "cz": "Maďarsko", "clues": ["Das Land liegt an der Donau.", "Die Politik des Landes wird in der EU oft diskutiert."]}, "HRV": {"name": "Kroatien", "cz": "Chorvatsko", "clues": ["Die Küste ist für viele europäische Touristen sehr wichtig.", "Viele Inseln und historische Städte prägen das Land."]}, "SVN": {"name": "Slowenien", "cz": "Slovinsko", "clues": ["Die Hauptstadt heißt Ljubljana.", "Das Land verbindet Alpen, Karst und Adriaküste."]}, "ROU": {"name": "Rumänien", "cz": "Rumunsko", "clues": ["Die Hauptstadt heißt Bukarest.", "Die Region Transsilvanien ist international sehr bekannt."]}, "BGR": {"name": "Bulgarien", "cz": "Bulharsko", "clues": ["Die Hauptstadt heißt Sofia.", "Das Land schreibt mit kyrillischer Schrift."]}, "EST": {"name": "Estland", "cz": "Estonsko", "clues": ["Die Hauptstadt heißt Tallinn.", "Das Land gilt als sehr digitalisiert.", "Es liegt an der Ostsee."]}, "LVA": {"name": "Lettland", "cz": "Lotyšsko", "clues": ["Die Hauptstadt heißt Riga.", "Das Land liegt zwischen Estland und Litauen.", "Viele Wälder prägen die Landschaft."]}, "LTU": {"name": "Litauen", "cz": "Litva", "clues": ["Die Hauptstadt heißt Vilnius.", "Basketball ist hier sehr beliebt.", "Das Land grenzt an Polen und Lettland."]}, "ALB": {"name": "Albanien", "cz": "Albánie", "clues": ["Die Hauptstadt heißt Tirana.", "Das Land liegt am Adriatischen Meer.", "Viele Bunker erinnern an seine kommunistische Vergangenheit."]}, "MDA": {"name": "Moldau", "cz": "Moldavsko", "clues": ["Die Hauptstadt heißt Chișinău.", "Das Land liegt zwischen Rumänien und der Ukraine.", "Viele Menschen sprechen Rumänisch."]}, "MNE": {"name": "Montenegro", "cz": "Černá Hora", "clues": ["Die Hauptstadt heißt Podgorica.", "Die Bucht von Kotor ist sehr bekannt.", "Das Land liegt an der Adria."]}, "MKD": {"name": "Nordmazedonien", "cz": "Severní Makedonie", "clues": ["Die Hauptstadt heißt Skopje.", "Der Ohridsee ist ein wichtiges Natur- und Kulturgebiet.", "Das Land liegt auf dem Balkan."]}, "KOS": {"name": "Kosovo", "cz": "Kosovo", "clues": ["Die Hauptstadt heißt Pristina.", "Das Land ist einer der jüngsten Staaten Europas.", "Hier bezahlt man mit Euro."]}};
-let quizItems=quizItemsA1;
-let currentLevel='A1';
-let currentTarget=null;
-let appMode='quiz';
-let freeMode='1';
+const quizItemsA1 = {"DEU": {"name": "Deutschland", "cz": "Německo", "clues": ["Hier steht das Brandenburger Tor.", "Hier fährt der ICE."]}, "AUT": {"name": "Österreich", "cz": "Rakousko", "clues": ["Hier steht Schloss Schönbrunn.", "Hier isst man Schnitzel."]}, "CHE": {"name": "Schweiz", "cz": "Švýcarsko", "clues": ["Hier bezahlt man mit Franken.", "Hier isst man Käsefondue."]}, "FRA": {"name": "Frankreich", "cz": "Francie", "clues": ["Hier steht der Eiffelturm.", "Hier isst man Croissants."]}, "ITA": {"name": "Italien", "cz": "Itálie", "clues": ["Hier steht das Kolosseum.", "Hier isst man Pizza und Pasta."]}, "ESP": {"name": "Spanien", "cz": "Španělsko", "clues": ["Hier steht die Sagrada Família.", "Hier tanzt man Flamenco."]}, "GRC": {"name": "Griechenland", "cz": "Řecko", "clues": ["Hier steht die Akropolis.", "Hier isst man Gyros."]}, "NLD": {"name": "Niederlande", "cz": "Nizozemsko", "clues": ["Hier gibt es viele Windmühlen.", "Hier fährt man viel Fahrrad."]}, "BEL": {"name": "Belgien", "cz": "Belgie", "clues": ["Hier gibt es das Atomium.", "Hier isst man Waffeln."]}, "DNK": {"name": "Dänemark", "cz": "Dánsko", "clues": ["Hier steht die Kleine Meerjungfrau.", "Hier kommt LEGO her."]}, "SWE": {"name": "Schweden", "cz": "Švédsko", "clues": ["Hier kommt IKEA her.", "Hier gibt es rote Holzhäuser."]}, "NOR": {"name": "Norwegen", "cz": "Norsko", "clues": ["Hier gibt es Fjorde.", "Hier sieht man Nordlichter."]}, "FIN": {"name": "Finnland", "cz": "Finsko", "clues": ["Hier wohnt der Weihnachtsmann.", "Hier gibt es viele Saunen."]}, "ISL": {"name": "Island", "cz": "Island", "clues": ["Hier gibt es Geysire.", "Hier gibt es viele Vulkane."]}, "IRL": {"name": "Irland", "cz": "Irsko", "clues": ["Hier ist der St. Patrick’s Day wichtig.", "Hier gibt es grüne Kleeblätter."]}, "PRT": {"name": "Portugal", "cz": "Portugalsko", "clues": ["Hier fährt die gelbe Straßenbahn.", "Die Hauptstadt heißt Lissabon."]}, "POL": {"name": "Polen", "cz": "Polsko", "clues": ["Hier isst man Pierogi.", "Das Land grenzt an Deutschland."]}, "CZE": {"name": "Tschechien", "cz": "Česko", "clues": ["Hier steht die Karlsbrücke.", "Hier trinkt man viel Bier."]}, "SVK": {"name": "Slowakei", "cz": "Slovensko", "clues": ["Hier gibt es die Hohe Tatra.", "Bratislava liegt an der Donau."]}, "HUN": {"name": "Ungarn", "cz": "Maďarsko", "clues": ["Hier isst man Gulasch.", "Hier gibt es den Plattensee."]}, "HRV": {"name": "Kroatien", "cz": "Chorvatsko", "clues": ["Hier liegt Dubrovnik.", "Hier gibt es viele Inseln."]}, "SVN": {"name": "Slowenien", "cz": "Slovinsko", "clues": ["Hier liegt der Bleder See.", "Ljubljana ist die Hauptstadt."]}, "ROU": {"name": "Rumänien", "cz": "Rumunsko", "clues": ["Hier gibt es Schloss Bran.", "Hier denkt man an Dracula."]}, "BGR": {"name": "Bulgarien", "cz": "Bulharsko", "clues": ["Hier schreibt man kyrillisch.", "Sofia ist die Hauptstadt."]}, "EST": {"name": "Estland", "cz": "Estonsko", "clues": ["Das Land liegt an der Ostsee.", "Hier gibt es viele Inseln.", "Die Hauptstadt heißt Tallinn."]}, "LVA": {"name": "Lettland", "cz": "Lotyšsko", "clues": ["Das Land liegt an der Ostsee.", "Hier gibt es viele Wälder.", "Die Hauptstadt heißt Riga."]}, "LTU": {"name": "Litauen", "cz": "Litva", "clues": ["Das Land liegt an der Ostsee.", "Basketball ist hier sehr beliebt.", "Die Hauptstadt heißt Vilnius."]}, "ALB": {"name": "Albanien", "cz": "Albánie", "clues": ["Das Land liegt am Adriatischen Meer.", "Hier gibt es viele Bunker.", "Die Hauptstadt heißt Tirana."]}, "MDA": {"name": "Moldau", "cz": "Moldavsko", "clues": ["Hier spricht man Rumänisch.", "Das Land liegt zwischen Rumänien und der Ukraine.", "Die Hauptstadt heißt Chișinău."]}, "MNE": {"name": "Montenegro", "cz": "Černá Hora", "clues": ["Das Land liegt am Adriatischen Meer.", "Hier liegt die Bucht von Kotor.", "Die Hauptstadt heißt Podgorica."]}, "MKD": {"name": "Nordmazedonien", "cz": "Severní Makedonie", "clues": ["Das Land liegt auf dem Balkan.", "Hier liegt der Ohridsee.", "Die Hauptstadt heißt Skopje."]}, "KOS": {"name": "Kosovo", "cz": "Kosovo", "clues": ["Das Land liegt auf dem Balkan.", "Hier bezahlt man mit Euro.", "Die Hauptstadt heißt Pristina."]}};
+const quizItemsB12 = {"DEU": {"name": "Deutschland", "cz": "Německo", "clues": ["Das Land hat 16 Bundesländer.", "Die Wiedervereinigung prägt seine moderne Geschichte."]}, "AUT": {"name": "Österreich", "cz": "Rakousko", "clues": ["Das Land ist für Wintersport sehr bekannt.", "Kaffeehäuser und klassische Musik sind kulturell wichtig."]}, "CHE": {"name": "Schweiz", "cz": "Švýcarsko", "clues": ["Das Land ist nicht in der EU.", "Es ist für Neutralität und mehrere Amtssprachen bekannt."]}, "FRA": {"name": "Frankreich", "cz": "Francie", "clues": ["Das Land gilt als stark zentralisiert.", "Die Hauptstadt dominiert Politik, Wirtschaft und Kultur."]}, "ITA": {"name": "Italien", "cz": "Itálie", "clues": ["Zwischen Norden und Süden gibt es große wirtschaftliche Unterschiede.", "Das Land ist stark von Tourismus, Design und Industrie geprägt."]}, "ESP": {"name": "Spanien", "cz": "Španělsko", "clues": ["Das Land besteht aus verschiedenen autonomen Regionen.", "Katalonien und das Baskenland haben starke regionale Identitäten."]}, "GRC": {"name": "Griechenland", "cz": "Řecko", "clues": ["Die Antike prägt bis heute das Bild des Landes.", "Viele Inseln leben stark vom Tourismus."]}, "NLD": {"name": "Niederlande", "cz": "Nizozemsko", "clues": ["Ein großer Teil des Landes liegt sehr niedrig.", "Das Land ist für Wasserbau und Fahrradkultur bekannt."]}, "BEL": {"name": "Belgien", "cz": "Belgie", "clues": ["In diesem Land gibt es mehrere Sprachgemeinschaften.", "Die EU-Institutionen spielen hier eine wichtige Rolle."]}, "DNK": {"name": "Dänemark", "cz": "Dánsko", "clues": ["Das Land gehört zu Skandinavien.", "Es ist für hohe Lebensqualität und Design bekannt."]}, "SWE": {"name": "Schweden", "cz": "Švédsko", "clues": ["Das Land steht oft für Sozialstaat und Gleichberechtigung.", "Viele internationale Firmen kommen von hier."]}, "NOR": {"name": "Norwegen", "cz": "Norsko", "clues": ["Das Land ist nicht in der EU.", "Öl, Gas und Fjorde prägen das Land stark."]}, "FIN": {"name": "Finnland", "cz": "Finsko", "clues": ["Das Land hat ein sehr bekanntes Bildungssystem.", "Sauna und Natur spielen eine große Rolle im Alltag."]}, "ISL": {"name": "Island", "cz": "Island", "clues": ["Das Land liegt auf einer vulkanisch aktiven Insel.", "Energie aus Erdwärme spielt eine wichtige Rolle."]}, "IRL": {"name": "Irland", "cz": "Irsko", "clues": ["Auswanderung prägt die Geschichte des Landes stark.", "Viele internationale Firmen haben hier ihren europäischen Sitz."]}, "PRT": {"name": "Portugal", "cz": "Portugalsko", "clues": ["Das Land war früher eine wichtige Seemacht.", "Die Hauptstadt heißt Lissabon."]}, "POL": {"name": "Polen", "cz": "Polsko", "clues": ["Das Land hat eine lange gemeinsame Geschichte mit Deutschland.", "Nach 1989 veränderte sich Politik und Wirtschaft stark."]}, "CZE": {"name": "Tschechien", "cz": "Česko", "clues": ["Das Land liegt im Herzen Mitteleuropas.", "Industrie, Bierkultur und Prag prägen sein Bild im Ausland."]}, "SVK": {"name": "Slowakei", "cz": "Slovensko", "clues": ["Die Hohe Tatra ist ein wichtiges Naturgebiet.", "Die Hauptstadt heißt Bratislava."]}, "HUN": {"name": "Ungarn", "cz": "Maďarsko", "clues": ["Das Land liegt an der Donau.", "Die Politik des Landes wird in der EU oft diskutiert."]}, "HRV": {"name": "Kroatien", "cz": "Chorvatsko", "clues": ["Die Küste ist für viele europäische Touristen sehr wichtig.", "Viele Inseln und historische Städte prägen das Land."]}, "SVN": {"name": "Slowenien", "cz": "Slovinsko", "clues": ["Das Land verbindet Alpen, Karst und Adriaküste.", "Die Hauptstadt heißt Ljubljana."]}, "ROU": {"name": "Rumänien", "cz": "Rumunsko", "clues": ["Die Region Transsilvanien ist international sehr bekannt.", "Die Hauptstadt heißt Bukarest."]}, "BGR": {"name": "Bulgarien", "cz": "Bulharsko", "clues": ["Das Land schreibt mit kyrillischer Schrift.", "Die Hauptstadt heißt Sofia."]}, "EST": {"name": "Estland", "cz": "Estonsko", "clues": ["Das Land gilt als sehr digitalisiert.", "Es liegt an der Ostsee.", "Die Hauptstadt heißt Tallinn."]}, "LVA": {"name": "Lettland", "cz": "Lotyšsko", "clues": ["Das Land liegt zwischen Estland und Litauen.", "Viele Wälder prägen die Landschaft.", "Die Hauptstadt heißt Riga."]}, "LTU": {"name": "Litauen", "cz": "Litva", "clues": ["Basketball ist hier sehr beliebt.", "Das Land grenzt an Polen und Lettland.", "Die Hauptstadt heißt Vilnius."]}, "ALB": {"name": "Albanien", "cz": "Albánie", "clues": ["Das Land liegt am Adriatischen Meer.", "Viele Bunker erinnern an seine kommunistische Vergangenheit.", "Die Hauptstadt heißt Tirana."]}, "MDA": {"name": "Moldau", "cz": "Moldavsko", "clues": ["Das Land liegt zwischen Rumänien und der Ukraine.", "Viele Menschen sprechen Rumänisch.", "Die Hauptstadt heißt Chișinău."]}, "MNE": {"name": "Montenegro", "cz": "Černá Hora", "clues": ["Die Bucht von Kotor ist sehr bekannt.", "Das Land liegt an der Adria.", "Die Hauptstadt heißt Podgorica."]}, "MKD": {"name": "Nordmazedonien", "cz": "Severní Makedonie", "clues": ["Der Ohridsee ist ein wichtiges Natur- und Kulturgebiet.", "Das Land liegt auf dem Balkan.", "Die Hauptstadt heißt Skopje."]}, "KOS": {"name": "Kosovo", "cz": "Kosovo", "clues": ["Das Land ist einer der jüngsten Staaten Europas.", "Hier bezahlt man mit Euro.", "Die Hauptstadt heißt Pristina."]}};
 
-const quizPanel=document.getElementById('quizPanel');
-const kartePanel=document.getElementById('kartePanel');
-const quizTab=document.getElementById('quizTab');
-const karteTab=document.getElementById('karteTab');
+let quizItems = quizItemsA1;
+let currentLevel = 'A1';
+let currentTarget = null;
+let appMode = 'karte';
+let freeMode = '1';
 
-const quizClues=document.getElementById('quizClues');
-const feedback=document.getElementById('feedback');
-const freeCountryName=document.getElementById('freeCountryName');
-const freeCountryStatus=document.getElementById('freeCountryStatus');
+let quizQueue = [];
+let quizTotal = 0;
+let quizIndex = 0;
+let correctCount = 0;
+let currentAnswered = false;
 
-function resetColors(){
-  document.querySelectorAll('.country').forEach(c=>{c.dataset.state=0; c.classList.remove('flash-wrong');});
+const kartePanel = document.getElementById('kartePanel');
+const quizPanel = document.getElementById('quizPanel');
+const karteTab = document.getElementById('karteTab');
+const quizTab = document.getElementById('quizTab');
+
+const freeCountryName = document.getElementById('freeCountryName');
+const freeCountryStatus = document.getElementById('freeCountryStatus');
+
+const quizClues = document.getElementById('quizClues');
+const feedback = document.getElementById('feedback');
+const progressText = document.getElementById('progressText');
+const startQuizBtn = document.getElementById('startQuizBtn');
+const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+const showAnswerBtn = document.getElementById('showAnswerBtn');
+const quizSetup = document.getElementById('quizSetup');
+const quizCard = document.getElementById('quizCard');
+const quizControls = document.getElementById('quizControls');
+
+function shuffle(array) {
+  const a = [...array];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
-function setAppMode(mode){
-  appMode=mode;
-  quizPanel.classList.toggle('active', mode==='quiz');
-  kartePanel.classList.toggle('active', mode==='karte');
-  quizTab.classList.toggle('active', mode==='quiz');
-  karteTab.classList.toggle('active', mode==='karte');
-}
-
-function newQuiz(){
-  resetColors();
-  const keys=Object.keys(quizItems).filter(id=>document.getElementById(id));
-  currentTarget=keys[Math.floor(Math.random()*keys.length)];
-  const item=quizItems[currentTarget];
-  quizClues.innerHTML='';
-  item.clues.forEach(t=>{
-    const li=document.createElement('li');
-    li.textContent=t;
-    quizClues.appendChild(li);
+function resetColors() {
+  document.querySelectorAll('.country').forEach(country => {
+    country.dataset.state = '0';
+    country.classList.remove('flash-wrong');
   });
-  feedback.textContent='Welches Land ist das? Klicke auf die Karte. Niveau: '+(currentLevel === 'A1' ? 'A1' : 'B1–B2')+'.';
 }
 
-function showAnswer(){
-  if(!currentTarget) {
-    feedback.textContent='Klicke zuerst auf „Neue Indizien“.';
+function setMode(mode) {
+  appMode = mode;
+  kartePanel.classList.toggle('active', mode === 'karte');
+  quizPanel.classList.toggle('active', mode === 'quiz');
+  karteTab.classList.toggle('active', mode === 'karte');
+  quizTab.classList.toggle('active', mode === 'quiz');
+}
+
+function resetQuiz() {
+  resetColors();
+  currentTarget = null;
+  quizQueue = [];
+  quizTotal = 0;
+  quizIndex = 0;
+  correctCount = 0;
+  currentAnswered = false;
+
+  quizClues.innerHTML = '';
+  progressText.textContent = '';
+  feedback.textContent = '';
+  feedback.style.display = 'none';
+  nextQuestionBtn.style.display = 'none';
+  showAnswerBtn.style.display = 'inline-block';
+  quizCard.style.display = 'none';
+  quizControls.style.display = 'none';
+  quizSetup.style.display = 'block';
+  startQuizBtn.textContent = 'Quiz starten';
+}
+
+function startQuiz() {
+  resetColors();
+  const allKeys = Object.keys(quizItems).filter(id => document.getElementById(id));
+  const selectedCount = document.querySelector('input[name="questionCount"]:checked').value;
+  let count = selectedCount === 'all' ? allKeys.length : parseInt(selectedCount, 10);
+  count = Math.min(count, allKeys.length);
+
+  quizQueue = shuffle(allKeys).slice(0, count);
+  quizTotal = quizQueue.length;
+  quizIndex = 0;
+  correctCount = 0;
+  currentAnswered = false;
+
+  quizSetup.style.display = 'none';
+  quizCard.style.display = 'block';
+  quizControls.style.display = 'block';
+  feedback.style.display = 'none';
+  nextQuestionBtn.style.display = 'none';
+
+  showNextQuestion();
+}
+
+function showNextQuestion() {
+  if (quizIndex >= quizTotal) {
+    finishQuiz();
     return;
   }
-  const item=quizItems[currentTarget];
-  feedback.textContent='Lösung: '+item.name+' ('+item.cz+').';
+
+  currentTarget = quizQueue[quizIndex];
+  currentAnswered = false;
+  const item = quizItems[currentTarget];
+
+  quizClues.innerHTML = '';
+  item.clues.forEach(text => {
+    const li = document.createElement('li');
+    li.textContent = text;
+    quizClues.appendChild(li);
+  });
+
+  progressText.textContent = 'Frage ' + (quizIndex + 1) + ' / ' + quizTotal;
+  feedback.textContent = '';
+  feedback.style.display = 'none';
+  showAnswerBtn.style.display = 'inline-block';
+  nextQuestionBtn.style.display = 'none';
 }
 
+function finishQuiz() {
+  currentTarget = null;
+  currentAnswered = true;
+  progressText.textContent = 'Geschafft!';
+  quizClues.innerHTML = '<li>Ergebnis: ' + correctCount + ' / ' + quizTotal + ' richtig.</li>';
+  feedback.textContent = '';
+  feedback.style.display = 'none';
+  nextQuestionBtn.style.display = 'none';
+  showAnswerBtn.style.display = 'none';
+  quizSetup.style.display = 'block';
+  startQuizBtn.textContent = 'Neues Quiz starten';
+}
 
-document.querySelectorAll('input[name="quizLevel"]').forEach(input=>{
-  input.addEventListener('change',()=>{
-    currentLevel=input.value;
+function showAnswer() {
+  if (!currentTarget) return;
+  const item = quizItems[currentTarget];
+  feedback.style.display = 'block';
+  feedback.textContent = 'Lösung: ' + item.name + ' (' + item.cz + ').';
+}
+
+function setActiveLabel(containerSelector, input) {
+  document.querySelectorAll(containerSelector + ' label').forEach(label => label.classList.remove('active'));
+  input.closest('label').classList.add('active');
+}
+
+document.querySelectorAll('input[name="quizLevel"]').forEach(input => {
+  input.addEventListener('change', () => {
+    currentLevel = input.value;
     quizItems = currentLevel === 'A1' ? quizItemsA1 : quizItemsB12;
-    document.querySelectorAll('#levelSwitch label').forEach(l=>l.classList.remove('active'));
-    input.closest('label').classList.add('active');
-    currentTarget=null;
-    resetColors();
-    quizClues.innerHTML='<li>Klicke auf „Neue Indizien“.</li>';
-    feedback.textContent='Wähle eine Aufgabe auf dem Niveau '+(currentLevel === 'A1' ? 'A1' : 'B1–B2')+'.';
+    setActiveLabel('#levelSwitch', input);
+    resetQuiz();
   });
 });
 
-document.querySelectorAll('input[name="freeMode"]').forEach(input=>{
-  input.addEventListener('change',()=>{
-    freeMode=input.value;
-    document.querySelectorAll('#freeModes label').forEach(l=>l.classList.remove('active'));
-    input.closest('label').classList.add('active');
+document.querySelectorAll('input[name="questionCount"]').forEach(input => {
+  input.addEventListener('change', () => setActiveLabel('#questionCount', input));
+});
+
+document.querySelectorAll('input[name="freeMode"]').forEach(input => {
+  input.addEventListener('change', () => {
+    freeMode = input.value;
+    setActiveLabel('#freeModes', input);
   });
 });
 
-document.querySelectorAll('.country').forEach(c=>{
-  c.addEventListener('click',()=>{
-    if(appMode==='karte'){
-      c.dataset.state=freeMode;
-      const labels={1:'Ich war schon dort.',2:'Ich möchte dorthin.',4:'Dorthin möchte ich nicht.'};
-      freeCountryName.textContent=c.dataset.de || c.id;
-      freeCountryStatus.textContent=(c.dataset.cz || '')+' · '+labels[freeMode];
+document.querySelectorAll('.country').forEach(country => {
+  country.addEventListener('click', () => {
+    if (appMode === 'karte') {
+      country.dataset.state = country.dataset.state === freeMode ? '0' : freeMode;
+
+      const labels = {
+        1: 'Ich war schon dort.',
+        2: 'Ich möchte dorthin.',
+        4: 'Dorthin möchte ich nicht.'
+      };
+
+      freeCountryName.textContent = country.dataset.de || country.id;
+      freeCountryStatus.textContent = country.dataset.state === '0'
+        ? ((country.dataset.cz || '') + ' · nicht markiert')
+        : ((country.dataset.cz || '') + ' · ' + labels[freeMode]);
       return;
     }
 
-    if(!currentTarget){
-      feedback.textContent='Klicke zuerst auf „Neue Indizien“.';
-      return;
-    }
-    if(c.id===currentTarget){
-      c.dataset.state=3;
-      const item=quizItems[currentTarget];
-      feedback.textContent='Richtig: '+item.name+' ('+item.cz+').';
+    if (!currentTarget || currentAnswered) return;
+
+    if (country.id === currentTarget) {
+      country.dataset.state = '3';
+      const item = quizItems[currentTarget];
+      correctCount++;
+      currentAnswered = true;
+      feedback.style.display = 'block';
+      feedback.textContent = 'Richtig: ' + item.name + ' (' + item.cz + ').';
+      showAnswerBtn.style.display = 'none';
+      quizIndex++;
+      nextQuestionBtn.style.display = 'inline-block';
+      nextQuestionBtn.textContent = quizIndex >= quizTotal ? 'Ergebnis anzeigen' : 'Nächste Frage';
     } else {
-      c.dataset.state=0;
-      c.classList.add('flash-wrong');
-      feedback.textContent='Noch nicht. Versuch es noch einmal.';
-      setTimeout(()=>c.classList.remove('flash-wrong'), 650);
+      country.dataset.state = '0';
+      country.classList.add('flash-wrong');
+      feedback.style.display = 'block';
+      feedback.textContent = 'Noch nicht. Versuch es noch einmal.';
+      setTimeout(() => country.classList.remove('flash-wrong'), 650);
     }
   });
 });
 
-quizTab.addEventListener('click',()=>setAppMode('quiz'));
-karteTab.addEventListener('click',()=>setAppMode('karte'));
+karteTab.addEventListener('click', () => setMode('karte'));
+quizTab.addEventListener('click', () => setMode('quiz'));
+startQuizBtn.addEventListener('click', startQuiz);
+nextQuestionBtn.addEventListener('click', showNextQuestion);
+showAnswerBtn.addEventListener('click', showAnswer);
 
-document.getElementById('newQuizBtn').addEventListener('click',newQuiz);
-document.getElementById('showAnswerBtn').addEventListener('click',showAnswer);
-document.getElementById('labelsBtnQuiz').addEventListener('click',()=>document.body.classList.toggle('hide-labels'));
-document.getElementById('labelsBtnKarte').addEventListener('click',()=>document.body.classList.toggle('hide-labels'));
+document.getElementById('labelsBtnKarte').addEventListener('click', () => document.body.classList.toggle('hide-labels'));
+document.getElementById('labelsBtnQuiz').addEventListener('click', () => document.body.classList.toggle('hide-labels'));
 
-document.getElementById('resetBtnQuiz').addEventListener('click',()=>{
+document.getElementById('resetBtnKarte').addEventListener('click', () => {
   resetColors();
-  currentTarget=null;
-  quizClues.innerHTML='<li>Klicke auf „Neue Indizien“.</li>';
-  feedback.textContent='Die Karte ist zurückgesetzt.';
-});
-document.getElementById('resetBtnKarte').addEventListener('click',()=>{
-  resetColors();
-  freeCountryName.textContent='Klicke auf ein Land';
-  freeCountryStatus.textContent='Die Karte ist zurückgesetzt.';
+  freeCountryName.textContent = 'Sprich über deine Reisen.';
+  freeCountryStatus.textContent = 'Wähle eine Farbe und markiere Länder.';
 });
 
-setAppMode('quiz');
+document.getElementById('resetBtnQuiz').addEventListener('click', resetQuiz);
+
+setMode('karte');
 </script>
-</body></html>
-
-
+</body>
+</html>
