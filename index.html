@@ -330,7 +330,7 @@ let quizTotal = 0;
 let quizIndex = 0;
 let correctCount = 0;
 let currentAnswered = false;
-let currentHadWrongAttempt = false;
+let currentQuestionHasWrongAttempt = false;
 
 const kartePanel = document.getElementById('kartePanel');
 const quizPanel = document.getElementById('quizPanel');
@@ -409,7 +409,7 @@ function resetQuiz() {
   quizIndex = 0;
   correctCount = 0;
   currentAnswered = false;
-  currentHadWrongAttempt = false;
+  currentQuestionHasWrongAttempt = false;
 
   quizClues.innerHTML = '';
   progressText.textContent = '';
@@ -435,7 +435,7 @@ function startQuiz() {
   quizIndex = 0;
   correctCount = 0;
   currentAnswered = false;
-  currentHadWrongAttempt = false;
+  currentQuestionHasWrongAttempt = false;
 
   quizSetup.style.display = 'none';
   quizCard.style.display = 'block';
@@ -454,7 +454,7 @@ function showNextQuestion() {
 
   currentTarget = quizQueue[quizIndex];
   currentAnswered = false;
-  currentHadWrongAttempt = false;
+  currentQuestionHasWrongAttempt = false;
   const item = quizItems[currentTarget];
 
   quizClues.innerHTML = '';
@@ -547,12 +547,12 @@ document.querySelectorAll('.country').forEach(country => {
       mapStates.quiz[country.id] = '3';
       country.dataset.state = '3';
       const item = quizItems[currentTarget];
-      if (!currentHadWrongAttempt) {
+      if (!currentQuestionHasWrongAttempt) {
         correctCount++;
       }
       currentAnswered = true;
       feedback.style.display = 'block';
-      feedback.textContent = currentHadWrongAttempt
+      feedback.textContent = currentQuestionHasWrongAttempt
         ? 'Richtig: ' + item.name + ' (' + item.cz + '). Kein Punkt für diese Frage.'
         : 'Richtig: ' + item.name + ' (' + item.cz + ').';
       showAnswerBtn.style.display = 'none';
@@ -561,6 +561,7 @@ document.querySelectorAll('.country').forEach(country => {
       nextQuestionBtn.textContent = quizIndex >= quizTotal ? 'Ergebnis anzeigen' : 'Nächste Frage';
     } else {
       currentHadWrongAttempt = true;
+      currentQuestionHasWrongAttempt = true;
       country.dataset.state = mapStates.quiz[country.id] || '0';
       country.classList.add('flash-wrong');
       feedback.style.display = 'block';
